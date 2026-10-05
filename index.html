@@ -1,35 +1,3 @@
-Aqui está o código HTML completo e atualizado com todas as melhorias solicitadas:
-
-1. **Login com Spotify (OAuth **PKCE**) & Opção de Desconectar**:
-* Adicionado botão **"Conectar com Spotify"** com visual verde oficial do Spotify.
-* Implementado o fluxo oficial de autenticação seguro (**OAuth 2.0 PKCE** sem necessidade de backend) para carregar o perfil e obter token de acesso.
-* Incluído o botão **"Sair / Desconectar"** que limpa o token de sessão, foto de perfil e restaura o estado inicial do aplicativo.
-
-
-2. **Aba / Painel Lateral de Fundos Dinâmicos**:
-* O seletor de fundo foi movido para uma **barra lateral (painel retrátil à esquerda)**, ficando totalmente fora da área do player para **não atrapalhar nem cobrir a interface do aplicativo durante as lives**.
-* Botão de acesso rápido `🎨 Fundos` posicionado ao lado do player.
-
-
-3. **Diversos Efeitos Dinâmicos Reativos à Música**:
-* **Reatividade ao Som / Animações Ativas**: Quando a música está tocando (`Play`), os efeitos ganham vida (pulsação de graves, rotação de luzes, ondas moving, equalizer e feixes de laser). Se pausar, as animações desaceleram/suavizam.
-* **6 Temas Dinâmicos Completos**:
-1. **Neon Pulse**: Pulsação vibrante com aura neon magenta/ciano.
-2. **Aurora Borealis**: Gradientes suaves e orgânicos em movimento fluido.
-3. **Equalizer Retro**: Malha de iluminação com movimento e perspectiva 3D.
-4. **Partículas Flutuantes**: Poeira estelar e luzes subindo em segundo plano.
-5. **Ondas Sonoras (Waves)**: Linhas sinusoidais com efeito de onda senoidal.
-6. **Club Strobe / Disco**: Feixes de laser giratórios e iluminação de balada.
-
-
-
-
-
----
-
-### Código HTML Completo (Pronto para Uso)
-
-```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -499,5 +467,3 @@ saveEdit.onclick=()=>{
 </script>
 </body>
 </html>
-
-```

@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Music Live Player - Pro Split Studio</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow-x:hidden;font-family:'Inter','Segoe UI',sans-serif;background:#05050b;color:#fff}
+body{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+
+/* Container Split (Player + Editor/Fila) */
+.app-container {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  max-width: 1180px;
+  height: 90vh;
+  max-height: 880px;
+  align-items: stretch;
+}
+
+/* Player Principal */
+.player{
+  flex: 1;
+  position:relative;
+  overflow:hidden;
+  border-radius: 24px;
+  display:flex;flex-direction:column;justify-content:space-between;padding:24px;
+  background:
+    radial-gradient(circle at 50% 25%,rgba(44,90,255,.32),transparent 30%),
+    radial-gradient(circle at 15% 75%,rgba(255,0,153,.22),transparent 28%),
+    radial-gradient(circle at 85% 65%,rgba(0,224,255,.20),transparent 28%),
+    linear-gradient(160deg,#070812 0%,#0a0b18 45%,#03030a 100%);
+  border: 1px solid #ffffff15;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+}
+
+.player:before{content:"";position:absolute;inset:-30%;background:conic-gradient(from 180deg,transparent,#1d42ff22,transparent,#ff18b322,transparent);filter:blur(50px);animation:spin 18s linear infinite;pointer-events:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.grid{position:absolute;inset:0;opacity:.12;background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:42px 42px;transform:perspective(500px) rotateX(58deg) scale(1.7);transform-origin:bottom;top:45%;pointer-events:none}
+
+.top{display:flex;align-items:center;justify-content:space-between;z-index:3}
+.live{display:flex;gap:10px;align-items:center;font-weight:800;letter-spacing:1.5px;font-size:16px}
+.dot{width:11px;height:11px;border-radius:50%;background:#ff315d;box-shadow:0 0 18px #ff315d;animation:pulse 1.2s infinite}
+@keyframes pulse{50%{transform:scale(.65);opacity:.55}}
+.badge{padding:8px 14px;border:1px solid #ffffff25;border-radius:999px;background:#ffffff0b;backdrop-filter:blur(14px);font-size:12px;color:#b9c7ff}
+
+.center{display:flex;flex-direction:column;align-items:center;text-align:center;z-index:2;margin:auto 0}
+.title{font-size:18px;letter-spacing:4px;color:#b7c5ff;font-weight:700}
+.subtitle{margin-top:4px;font-size:12px;color:#7f8bb0}
+
+.disc-wrap{position:relative;width:min(240px, 50vw);height:min(240px, 50vw);margin:20px auto}
+.glow{position:absolute;inset:0px;border-radius:50%;background:linear-gradient(45deg,#00eaff,#6c4dff,#ff27bc);filter:blur(25px);opacity:.6}
+.disc{position:absolute;inset:15px;border-radius:50%;background:repeating-radial-gradient(circle,#090a10 0 7px,#161923 8px 10px);border:2px solid #ffffff16;box-shadow:0 0 50px #294dff66, inset 0 0 40px #000;animation:record 7s linear infinite;animation-play-state:paused}
+@keyframes record{to{transform:rotate(360deg)}}
+.disc:before{content:"";position:absolute;inset:42%;border-radius:50%;background:linear-gradient(135deg,#00eaff,#6b5cff 55%,#ff2ac3);box-shadow:0 0 30px #00eaff88}
+.disc:after{content:"♫";position:absolute;left:0;right:0;top:43%;text-align:center;font-size:24px;font-weight:900;color:white;z-index:2}
+
+.visualizer{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:4px;z-index:3}
+.bar{width:4px;height:20px;border-radius:10px;background:linear-gradient(#00eaff,#7c4dff,#ff35c8);box-shadow:0 0 12px #4c6cff;transition:height 0.1s ease}
+
+.track{z-index:3;width:100%;margin-bottom:10px}
+.trackname{font-size:22px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
+.artist{font-size:13px;color:#8e99bb;margin-top:4px;text-align:center}
+.progress{margin-top:16px;height:6px;border-radius:20px;background:#ffffff18;cursor:pointer;position:relative;overflow:hidden}
+.fill{width:0%;height:100%;background:linear-gradient(90deg,#00eaff,#6d55ff,#ff32bf);box-shadow:0 0 15px #5b6dff;transition:width 0.1s linear}
+.times{display:flex;justify-content:space-between;margin-top:6px;color:#747e9e;font-size:11px}
+
+.controls{display:flex;align-items:center;justify-content:center;gap:20px;margin-top:12px}
+button{border:0;color:white;background:transparent;cursor:pointer;outline:none}
+.ctrl{font-size:20px;opacity:.8;transition:opacity 0.2s}.ctrl:hover{opacity:1}
+.play{width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#00eaff,#684eff 55%,#ff27bb);box-shadow:0 0 35px #5e5dff88;font-size:20px;display:grid;place-items:center}
+
+.bottom{z-index:3;width:100%}
+.request{border:1px solid #ffffff18;background:#ffffff08;backdrop-filter:blur(18px);border-radius:18px;padding:12px 16px}
+.reqhead{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:#aeb9d8;text-transform:uppercase;letter-spacing:1px}
+.reqhead b{color:#00eaff}
+.msg{display:flex;gap:10px;align-items:center;margin-top:8px}
+.avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#00eaff,#ff2dbd);display:grid;place-items:center;font-weight:800;font-size:11px}
+.msgtext{font-size:12px;color:#e9edff}.msgtext span{color:#7985a8}
+
+/* Painel Lateral (Editor e Playlist) */
+.side-panel {
+  width: 420px;
+  background: linear-gradient(145deg, #11162a, #080b16);
+  border: 1px solid #ffffff1c;
+  border-radius: 24px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+}
+
+.side-title { font-size: 18px; font-weight: 900; color: #fff; display: flex; justify-content: space-between; align-items: center; }
+.side-title span { font-size: 11px; color: #00eaff; background: #00eaff15; padding: 4px 10px; border-radius: 20px; border: 1px solid #00eaff44; }
+
+.section-label { font-size: 11px; font-weight: 800; letter-spacing: 1px; color: #8e99bb; margin-top: 10px; text-transform: uppercase; }
+
+/* Formulário de Adicionar Música */
+.add-box input {
+  width: 100%;
+  padding: 10px 12px;
+  margin-top: 6px;
+  border-radius: 10px;
+  border: 1px solid #ffffff18;
+  background: #ffffff09;
+  color: #fff;
+  outline: none;
+  font-size: 12px;
+}
+.add-box input:focus { border-color: #00eaff88; box-shadow: 0 0 10px #00eaff18; }
+.add-btn {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 0;
+  background: linear-gradient(90deg,#00cfff,#7156ff,#ed32b7);
+  color: #fff;
+  font-weight: 800;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* Lista de Próximas Músicas (Playlist) */
+.playlist {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 6px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+.track-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff08;
+  border: 1px solid #ffffff10;
+  padding: 10px 12px;
+  border-radius: 12px;
+}
+.track-item.active { border-color: #00eaff88; background: #00eaff12; }
+.track-info { display: flex; flex-direction: column; overflow: hidden; }
+.track-info .t-name { font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.track-info .t-artist { font-size: 10px; color: #7f8bb0; }
+.track-actions { display: flex; gap: 6px; }
+.btn-mini { padding: 4px 8px; border-radius: 6px; font-size: 10px; border: 0; cursor: pointer; background: #ffffff15; color: #fff; }
+.btn-mini:hover { background: #ff315d; }
+
+.particles{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+.particle{position:absolute;width:4px;height:4px;border-radius:50%;background:#fff;box-shadow:0 0 12px #00eaff;animation:floatUp linear infinite}
+@keyframes floatUp{from{transform:translateY(110vh) scale(.4);opacity:0}15%{opacity:.8}to{transform:translateY(-15vh) scale(1.3);opacity:0}}
+.album-art{position:absolute;inset:40px;border-radius:50%;background-size:cover;background-position:center;opacity:.25;filter:saturate(1.3);mix-blend-mode:screen;z-index:1}
+
+@media(max-width: 860px) {
+  .app-container { flex-direction: column; height: auto; max-height: none; }
+  .side-panel { width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<div class="app-container">
+  
+  <!-- PLAYER DE MÚSICA PRINCIPAL -->
+  <div class="player" id="player">
+    <div class="particles" id="particles"></div>
+    <div class="grid"></div>
+
+    <div class="top">
+      <div class="live"><i class="dot"></i> LIVE MUSIC</div>
+      <div class="badge">PEÇA SUA MÚSICA • 🎧</div>
+    </div>
+
+    <div class="center">
+      <div class="title">MUSIC LIVE PLAYER</div>
+      <div class="subtitle">Todos os gêneros • É só pedir na live</div>
+
+      <div class="disc-wrap">
+        <div class="glow"></div>
+        <div class="album-art" id="albumArt"></div>
+        <div class="disc" id="disc"></div>
+        <div class="visualizer">
+          <i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i>
+          <i class="bar"></i><i class="bar"></i><i class="bar"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="track">
+      <div class="trackname" id="trackName">Nenhuma música na fila</div>
+      <div class="artist" id="artist">Aguardando pedidos...</div>
+
+      <div class="progress" id="progress"><div class="fill" id="fill"></div></div>
+      <div class="times"><span id="current">00:00</span><span id="duration">03:45</span></div>
+
+      <div class="controls">
+        <button class="ctrl" title="Aleatório">⤨</button>
+        <button class="ctrl" id="prev">⏮</button>
+        <button class="play" id="play">▶</button>
+        <button class="ctrl" id="next">⏭</button>
+        <button class="ctrl" title="Repetir">↻</button>
+      </div>
+    </div>
+
+    <div class="bottom">
+      <div class="request">
+        <div class="reqhead"><span>🔥 PEDIDOS DA LIVE</span><b>1.284 ouvindo</b></div>
+        <div class="msg">
+          <div class="avatar">♪</div>
+          <div class="msgtext"><b>Pedido recebido!</b><br><span>“Toca essa música aí por favor 🙏”</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAINEL LATERAL DE EDIÇÃO E FILA -->
+  <div class="side-panel">
+    <div class="side-title">
+      <span>⚙️ STUDIO CONTROL</span>
+      <span>AO LADO DA LIVE</span>
+    </div>
+
+    <!-- Adicionar Nova Música -->
+    <div class="section-label">➕ Adicionar Pedido / Música</div>
+    <div class="add-box">
+      <input id="inTrack" type="text" placeholder="Nome da música (ex.: Evidências)">
+      <input id="inArtist" type="text" placeholder="Artista (ex.: Chitãozinho & Xororó)">
+      <button class="add-btn" id="btnAddQueue">+ Adicionar à Fila</button>
+    </div>
+
+    <!-- Fila de Reprodução -->
+    <div class="section-label">🎶 Próximas Músicas (<span id="queueCount">0</span>)</div>
+    <div class="playlist" id="playlist">
+      <!-- Músicas serão inseridas aqui dinamicamente -->
+    </div>
+  </div>
+
+</div>
+
+<script>
+// Gerenciamento da Fila de Músicas
+let queue = [
+  { name: 'Evidências', artist: 'Chitãozinho & Xororó' },
+  { name: 'Bohemian Rhapsody', artist: 'Queen' },
+  { name: 'Blinding Lights', artist: 'The Weeknd' }
+];
+
+let currentIndex = 0;
+let isPlaying = false;
+let seconds = 0, duration = 225;
+let timer = null;
+
+const trackName = document.getElementById('trackName');
+const artist = document.getElementById('artist');
+const playBtn = document.getElementById('play');
+const disc = document.getElementById('disc');
+const fill = document.getElementById('fill');
+const current = document.getElementById('current');
+const playlistEl = document.getElementById('playlist');
+const queueCount = document.getElementById('queueCount');
+
+function renderQueue() {
+  playlistEl.innerHTML = '';
+  queueCount.textContent = queue.length;
+
+  queue.forEach((item, index) => {
+    const div = document.createElement('div');
+    div.className = `track-item ${index === currentIndex ? 'active' : ''}`;
+    div.innerHTML = `
+      <div class="track-info">
+        <span class="t-name">${index === currentIndex ? '▶ ' : ''}${item.name}</span>
+        <span class="t-artist">${item.artist}</span>
+      </div>
+      <div class="track-actions">
+        <button class="btn-mini" onclick="removeTrack(${index})">✕</button>
+      </div>
+    `;
+    playlistEl.appendChild(div);
+  });
+
+  if (queue.length > 0 && queue[currentIndex]) {
+    trackName.textContent = queue[currentIndex].name;
+    artist.textContent = queue[currentIndex].artist + ' • Pedido da Live';
+  } else {
+    trackName.textContent = 'Nenhuma música na fila';
+    artist.textContent = 'Aguardando pedidos...';
+  }
+}
+
+function nextTrack() {
+  if (currentIndex < queue.length - 1) {
+    currentIndex++;
+  } else {
+    currentIndex = 0; // Volta ao início ou para
+  }
+  seconds = 0;
+  renderQueue();
+}
+
+function prevTrack() {
+  if (currentIndex > 0) {
+    currentIndex--;
+  } else {
+    currentIndex = queue.length - 1;
+  }
+  seconds = 0;
+  renderQueue();
+}
+
+function removeTrack(index) {
+  queue.splice(index, 1);
+  if (currentIndex >= queue.length) currentIndex = Math.max(0, queue.length - 1);
+  renderQueue();
+}
+
+document.getElementById('btnAddQueue').onclick = () => {
+  const name = document.getElementById('inTrack').value.trim();
+  const art = document.getElementById('inArtist').value.trim();
+  if (name) {
+    queue.push({ name, artist: art || 'Artista Desconhecido' });
+    document.getElementById('inTrack').value = '';
+    document.getElementById('inArtist').value = '';
+    renderQueue();
+  }
+};
+
+// Controles do Player
+playBtn.onclick = () => {
+  isPlaying = !isPlaying;
+  playBtn.textContent = isPlaying ? 'Ⅱ' : '▶';
+  disc.style.animationPlayState = isPlaying ? 'running' : 'paused';
+};
+
+document.getElementById('next').onclick = () => nextTrack();
+document.getElementById('prev').onclick = () => prevTrack();
+
+// Simulação de Progresso do Tempo
+setInterval(() => {
+  if (!isPlaying || queue.length === 0) return;
+  seconds++;
+  if (seconds >= duration) {
+    nextTrack();
+  }
+  fill.style.width = (seconds / duration * 100) + '%';
+  let m = Math.floor(seconds / 60), s = Math.floor(seconds % 60);
+  current.textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+}, 1000);
+
+// Partículas visuais
+const particlesContainer = document.getElementById('particles');
+for (let i = 0; i < 20; i++) {
+  const p = document.createElement('i');
+  p.className = 'particle';
+  p.style.left = Math.random() * 100 + '%';
+  p.style.animationDuration = (5 + Math.random() * 6) + 's';
+  p.style.animationDelay = (-Math.random() * 8) + 's';
+  particlesContainer.appendChild(p);
+}
+
+// Inicializar Fila
+renderQueue();
+</script>
+</body>
+</html>

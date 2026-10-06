@@ -48,7 +48,7 @@ display:inline-flex;align-items:center;gap:4px;
 .badge-btn.connect-btn{border-color:#1ed76088;background:#061a0cdd;color:#1ed760}
 .badge-btn.disconnect-btn{border-color:#ff315d88;background:#2a060cdd;color:#ff315d;display:none}
 
-/* Centro - Visualizador */
+/* Centro - Visualizador e Animação de Batida (BPM Pulse) */
 .center{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:auto 0}
 .title{font-size:13px;letter-spacing:4px;color:#94a5e0;font-weight:800;text-transform:uppercase}
 .subtitle{margin-top:4px;font-size:11px;color:#6f7b9c;font-weight:500}
@@ -56,6 +56,13 @@ display:inline-flex;align-items:center;gap:4px;
 .disc-wrap{
 position:relative;width:240px;height:240px;margin:15px auto;
 will-change: transform;
+animation: autoBeatPulse 0.5s ease-in-out infinite alternate;
+animation-play-state: paused;
+}
+
+@keyframes autoBeatPulse {
+  0% { transform: scale(0.96); }
+  100% { transform: scale(1.05); }
 }
 
 .glow{
@@ -117,20 +124,17 @@ animation-play-state: paused;
 .fill{width:0%;height:100%;background:linear-gradient(90deg,var(--c1, #00eaff),var(--c2, #6d55ff),var(--c3, #ff32bf));box-shadow:0 0 15px #5b6dff;transition:width 0.3s ease, background 1.5s ease}
 .times{display:flex;justify-content:space-between;margin-top:6px;color:#6d7799;font-size:10px;font-weight:700}
 
-/* Efeitos e Botões de Batida */
+/* Interações da Live */
 .bottom{position:relative;z-index:3;width:100%;display:flex;flex-direction:column;gap:8px;margin-bottom:5px}
 .effects-card{border:1px solid #ffffff18;background:rgba(255,255,255,0.05);backdrop-filter:blur(18px);border-radius:16px;padding:10px 12px;text-align:center}
 .effects-title{font-size:10px;font-weight:800;letter-spacing:1.2px;color:#8e9bc4;margin-bottom:6px;text-transform:uppercase}
 .effects-btns{display:flex;gap:6px;justify-content:center}
 
-.anim-btn{flex:1;padding:7px 8px;border-radius:10px;border:1px solid #ffffff20;background:rgba(255,255,255,0.06);color:#fff;font-size:10px;font-weight:700;cursor:pointer;transition:all .2s ease;display:flex;align-items:center;justify-content:center;gap:4px}
+.anim-btn{flex:1;padding:8px 10px;border-radius:10px;border:1px solid #ffffff20;background:rgba(255,255,255,0.06);color:#fff;font-size:10px;font-weight:700;cursor:pointer;transition:all .2s ease;display:flex;align-items:center;justify-content:center;gap:4px}
 .anim-btn:hover{transform:translateY(-2px);background:rgba(255,255,255,0.18)}
 .anim-btn.rose{border-color:#ff336655;color:#ff6688}
 .anim-btn.bolt{border-color:#00eaff55;color:#00eaff}
 .anim-btn.money{border-color:#1ed76055;color:#1ed760}
-
-.beat-btn{border-color:#00ffcc55;color:#00ffcc;background:rgba(0,255,204,0.08);font-weight:800}
-.beat-btn:active, .beat-btn.active-pad{background:#00ffcc;color:#000;box-shadow:0 0 15px #00ffcc;transform:scale(0.95)}
 
 /* Partículas e Flashes */
 .particle-container{position:absolute;inset:0;pointer-events:none;z-index:10;overflow:hidden}
@@ -219,17 +223,6 @@ will-change: transform;
 </div>
 
 <div class="bottom">
-  <!-- Botões de Batida/Percussão -->
-  <div class="effects-card">
-    <div class="effects-title">🥁 Batidas de Fundo (Teclado)</div>
-    <div class="effects-btns">
-      <button class="anim-btn beat-btn" id="btn-b" onclick="triggerBeat('b')">🥁 Kick [B]</button>
-      <button class="anim-btn beat-btn" id="btn-s" onclick="triggerBeat('s')">💥 Snare [S]</button>
-      <button class="anim-btn beat-btn" id="btn-h" onclick="triggerBeat('h')">🔔 Hi-Hat [H]</button>
-      <button class="anim-btn beat-btn" id="btn-c" onclick="triggerBeat('c')">👏 Clap [C]</button>
-    </div>
-  </div>
-
   <!-- Interações da Live -->
   <div class="effects-card">
     <div class="effects-title">✨ Interações da Live</div>
@@ -280,6 +273,7 @@ const fill = document.getElementById('fill');
 const current = document.getElementById('current');
 const duration = document.getElementById('duration');
 const statusSub = document.getElementById('statusSub');
+const discWrap = document.getElementById('discWrap');
 const discAnim = document.getElementById('discAnim');
 const visualizerBars = document.querySelectorAll('.bar');
 const bpmBadge = document.getElementById('bpmBadge');
@@ -287,105 +281,7 @@ const bpmBadge = document.getElementById('bpmBadge');
 let currentTrackId = null;
 
 /* ======================================================
-   SINTETIZADOR DE ÁUDIO PARA BATIDAS (WEB AUDIO API)
-   ====================================================== */
-let audioCtx = null;
-
-function getAudioContext() {
-  if (!audioCtx) {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  }
-  if (audioCtx.state === 'suspended') {
-    audioCtx.resume();
-  }
-  return audioCtx;
-}
-
-function playKickSound() {
-  const ctx = getAudioContext();
-  const osc = ctx.createOscillator();
-  const gain = ctx.createGain();
-
-  osc.connect(gain);
-  gain.connect(ctx.destination);
-
-  // Batida grave forte caindo de 170Hz para 30Hz
-  osc.frequency.setValueAtTime(170, ctx.currentTime);
-  osc.frequency.exponentialRampToValueAtTime(30, ctx.currentTime + 0.4);
-
-  gain.gain.setValueAtTime(1.2, ctx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
-
-  osc.start(ctx.currentTime);
-  osc.stop(ctx.currentTime + 0.4);
-}
-
-function playSnareSound() {
-  const ctx = getAudioContext();
-  const osc = ctx.createOscillator();
-  const gain = ctx.createGain();
-
-  osc.type = 'triangle';
-  osc.connect(gain);
-  gain.connect(ctx.destination);
-
-  osc.frequency.setValueAtTime(220, ctx.currentTime);
-  osc.frequency.exponentialRampToValueAtTime(70, ctx.currentTime + 0.2);
-
-  gain.gain.setValueAtTime(0.8, ctx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
-
-  osc.start(ctx.currentTime);
-  osc.stop(ctx.currentTime + 0.2);
-}
-
-function playHiHatSound() {
-  const ctx = getAudioContext();
-  const osc = ctx.createOscillator();
-  const gain = ctx.createGain();
-
-  osc.type = 'square';
-  osc.connect(gain);
-  gain.connect(ctx.destination);
-
-  osc.frequency.setValueAtTime(8000, ctx.currentTime);
-
-  gain.gain.setValueAtTime(0.3, ctx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.08);
-
-  osc.start(ctx.currentTime);
-  osc.stop(ctx.currentTime + 0.08);
-}
-
-function triggerBeat(key) {
-  const k = key.toLowerCase();
-  let btnId = '';
-
-  if (k === 'b') {
-    playKickSound();
-    btnId = 'btn-b';
-  } else if (k === 's') {
-    playSnareSound();
-    btnId = 'btn-s';
-  } else if (k === 'h') {
-    playHiHatSound();
-    btnId = 'btn-h';
-  } else if (k === 'c') {
-    playSnareSound();
-    btnId = 'btn-c';
-  }
-
-  if (btnId) {
-    const btn = document.getElementById(btnId);
-    if (btn) {
-      btn.classList.add('active-pad');
-      setTimeout(() => btn.classList.remove('active-pad'), 120);
-    }
-  }
-}
-
-/* ======================================================
-   CONTROLE DE BPM E ANIMAÇÃO
+   CONTROLE DE BPM E BATIDA AUTOMÁTICA
    ====================================================== */
 let bpm = 120;
 const passoBpm = 5;
@@ -396,14 +292,20 @@ function alterarBpm(valor) {
   bpm = Math.min(bpmMaximo, Math.max(bpmMinimo, bpm + valor));
   bpmBadge.textContent = `⚡ ${bpm} BPM`;
   
-  const duracaoRotacao = (60 / bpm) * 8; 
-  const duracaoBounce = (60 / bpm);
+  const duracaoBatida = (60 / bpm); 
+  const duracaoRotacao = duracaoBatida * 8;
   
+  // Atualiza a velocidade da pulsação do álbum e das barras
+  discWrap.style.animationDuration = `${duracaoBatida / 2}s`;
   discAnim.style.animationDuration = `${duracaoRotacao}s`;
+  
   visualizerBars.forEach(bar => {
-    bar.style.animationDuration = `${duracaoBounce}s`;
+    bar.style.animationDuration = `${duracaoBatida}s`;
   });
 }
+
+// Inicializa velocidade do BPM padrão
+alterarBpm(0);
 
 /* ======================================================
    ATALHOS E CONTROLES DE TECLADO
@@ -412,11 +314,6 @@ document.addEventListener('keydown', e => {
   if (document.activeElement.tagName === 'INPUT') return;
 
   const key = e.key.toLowerCase();
-
-  // Disparo de batida na tecla B e outras
-  if (['b', 's', 'h', 'c'].includes(key)) {
-    triggerBeat(key);
-  }
 
   // Tecla L: Aumenta o BPM
   if (key === 'l') {
@@ -637,6 +534,7 @@ function fmt(ms) {
 
 function setPlaybackState(isPlaying) {
   const state = isPlaying ? 'running' : 'paused';
+  discWrap.style.animationPlayState = state;
   discAnim.style.animationPlayState = state;
   visualizerBars.forEach(bar => {
     bar.style.animationPlayState = state;

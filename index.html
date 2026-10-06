@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Music Live Player - TikTok Real Audio Edition</title>
+<title>Music Live Player - TikTok Edition</title>
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;font-family:'Inter',Segoe UI,Arial,sans-serif;background:#030307;color:#fff}
@@ -47,7 +47,6 @@ display:inline-flex;align-items:center;gap:4px;
 .badge-btn:hover{background:#ffffff22;color:#fff}
 .badge-btn.connect-btn{border-color:#1ed76088;background:#061a0cdd;color:#1ed760}
 .badge-btn.disconnect-btn{border-color:#ff315d88;background:#2a060cdd;color:#ff315d;display:none}
-.badge-btn.audio-btn{border-color:#00eaff88;background:#003c42dd;color:#00eaff}
 
 /* Centro - Visualizador */
 .center{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:auto 0}
@@ -70,14 +69,14 @@ will-change: transform, filter, opacity;
 position:absolute;inset:18px;border-radius:50%;
 background:repeating-radial-gradient(circle,#090a10 0 7px,#161923 8px 10px);
 border:2px solid #ffffff18;box-shadow:0 0 40px #294dff66, inset 0 0 30px #000;
-animation:record 7s linear infinite;
+animation:record 4s linear infinite;
 animation-play-state: paused;
 }
 @keyframes record{to{transform:rotate(360deg)}}
 .disc:before{content:"";position:absolute;inset:40%;border-radius:50%;background:linear-gradient(135deg,var(--c1, #00eaff),var(--c2, #6b5cff) 55%,var(--c3, #ff2ac3));box-shadow:0 0 25px #00eaff88;transition:background 1.5s ease}
 .disc:after{content:"♫";position:absolute;left:0;right:0;top:43%;text-align:center;font-size:24px;font-weight:900;color:white;z-index:2}
 
-/* Barras de Áudio Dinâmicas */
+/* Barras de Áudio Animadas por CSS */
 .visualizer{
 position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:6px;z-index:3;
 }
@@ -87,7 +86,27 @@ background:linear-gradient(var(--c1, #00eaff),var(--c2, #7c4dff),var(--c3, #ff35
 box-shadow:0 0 12px #4c6cff;transition:background 1.5s ease;
 transform-origin: center;
 transform: scaleY(0.1);
-will-change: transform;
+animation: barBounce 1s ease-in-out infinite alternate;
+animation-play-state: paused;
+}
+
+.bar:nth-child(1) { animation-delay: 0.1s; }
+.bar:nth-child(2) { animation-delay: 0.3s; }
+.bar:nth-child(3) { animation-delay: 0.5s; }
+.bar:nth-child(4) { animation-delay: 0.2s; }
+.bar:nth-child(5) { animation-delay: 0.4s; }
+.bar:nth-child(6) { animation-delay: 0.6s; }
+.bar:nth-child(7) { animation-delay: 0.15s; }
+.bar:nth-child(8) { animation-delay: 0.35s; }
+.bar:nth-child(9) { animation-delay: 0.55s; }
+.bar:nth-child(10) { animation-delay: 0.25s; }
+.bar:nth-child(11) { animation-delay: 0.45s; }
+.bar:nth-child(12) { animation-delay: 0.65s; }
+
+@keyframes barBounce {
+  0% { transform: scaleY(0.15); }
+  50% { transform: scaleY(1); }
+  100% { transform: scaleY(0.3); }
 }
 
 /* Informações da Música */
@@ -164,7 +183,6 @@ will-change: transform;
     <div class="bpm-badge" id="bpmBadge">⚡ 120 BPM</div>
   </div>
   <div class="top-actions" id="topActions">
-    <button class="badge-btn audio-btn" id="startAudioBtn">🎤 OUVIR ÁUDIO</button>
     <button class="badge-btn" id="bgToggleBtn">✨ FUNDO: ON</button>
     <button class="badge-btn connect-btn" id="connectNavBtn">🎧 SPOTIFY</button>
     <button class="badge-btn disconnect-btn" id="disconnectNavBtn">❌ SAIR</button>
@@ -233,7 +251,6 @@ const saveClientIdBtn = document.getElementById('saveClientIdBtn');
 
 const connectNavBtn = document.getElementById('connectNavBtn');
 const disconnectNavBtn = document.getElementById('disconnectNavBtn');
-const startAudioBtn = document.getElementById('startAudioBtn');
 
 const bgToggleBtn = document.getElementById('bgToggleBtn');
 const dynamicBg = document.getElementById('dynamicBg');
@@ -248,15 +265,13 @@ const current = document.getElementById('current');
 const duration = document.getElementById('duration');
 const statusSub = document.getElementById('statusSub');
 const discAnim = document.getElementById('discAnim');
-const discWrap = document.getElementById('discWrap');
-const glowAnim = document.getElementById('glowAnim');
 const visualizerBars = document.querySelectorAll('.bar');
 const bpmBadge = document.getElementById('bpmBadge');
 
 let currentTrackId = null;
 
 /* ======================================================
-   CONTROLE DE BPM
+   CONTROLE DE BPM E ANIMAÇÃO
    ====================================================== */
 let bpm = 120;
 const passoBpm = 5;
@@ -267,112 +282,20 @@ function alterarBpm(valor) {
   bpm = Math.min(bpmMaximo, Math.max(bpmMinimo, bpm + valor));
   bpmBadge.textContent = `⚡ ${bpm} BPM`;
   
-  // Atualiza a velocidade de rotação do disco sincronizada ao BPM (quanto maior o BPM, mais rápido gira)
-  const duracaoRotacao = (60 / bpm) * 8; // cálculo proporcional de velocidade
+  // Atualiza velocidade de rotação do disco e velocidade de pulso do visualizador
+  const duracaoRotacao = (60 / bpm) * 8; 
+  const duracaoBounce = (60 / bpm);
+  
   discAnim.style.animationDuration = `${duracaoRotacao}s`;
-}
-
-/* ======================================================
-   WEB AUDIO API - VISUALIZADOR EM TEMPO REAL (REAL AUDIO)
-   ====================================================== */
-let audioCtx = null;
-let analyser = null;
-let dataArray = null;
-let isAudioActive = false;
-let isTrackPlaying = false;
-
-async function initRealAudio() {
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    analyser = audioCtx.createAnalyser();
-    analyser.fftSize = 64; // Retorna 32 bandas de frequência
-    
-    const source = audioCtx.createMediaStreamSource(stream);
-    source.connect(analyser);
-
-    const bufferLength = analyser.frequencyBinCount;
-    dataArray = new Uint8Array(bufferLength);
-    
-    isAudioActive = true;
-    startAudioBtn.textContent = '🎤 ÁUDIO: ATIVO';
-    startAudioBtn.style.borderColor = '#1ed760';
-    startAudioBtn.style.color = '#1ed760';
-
-    renderAudioFrame();
-  } catch (err) {
-    console.error('Erro ao acessar áudio:', err);
-    alert('Não foi possível capturar o áudio. Permita a entrada de microfone/áudio no navegador.');
-  }
-}
-
-startAudioBtn.onclick = () => {
-  if (audioCtx && audioCtx.state === 'suspended') {
-    audioCtx.resume();
-  }
-  if (!isAudioActive) {
-    initRealAudio();
-  }
-};
-
-function renderAudioFrame() {
-  requestAnimationFrame(renderAudioFrame);
-  if (!isAudioActive || !analyser) return;
-
-  analyser.getByteFrequencyData(dataArray);
-
-  // 1. EXTRAÇÃO DOS GRAVES (Sub-Bass/Kick: primeiras bandas 0-4)
-  let bassSum = 0;
-  for (let i = 0; i < 4; i++) {
-    bassSum += dataArray[i];
-  }
-  const bassNorm = bassSum / (4 * 255); // Valor normalizado de 0.0 a 1.0
-
-  if (isTrackPlaying) {
-    // Escala o Disco no ritmo do Grave
-    const discScale = 0.96 + (bassNorm * 0.18);
-    discWrap.style.transform = `scale(${discScale})`;
-
-    // Pulsação e Intensidade Neon do Glow de fundo
-    const blurPx = 20 + (bassNorm * 40);
-    const opacityVal = 0.5 + (bassNorm * 0.45);
-    glowAnim.style.filter = `blur(${blurPx}px)`;
-    glowAnim.style.opacity = opacityVal;
-
-    // Tremor de Tela (Shake) nos graves fortes
-    if (bassNorm > 0.65) {
-      const shakeX = (Math.random() - 0.5) * 8 * bassNorm;
-      const shakeY = (Math.random() - 0.5) * 8 * bassNorm;
-      playerEl.style.transform = `translate(${shakeX}px, ${shakeY}px)`;
-    } else {
-      playerEl.style.transform = 'translate(0px, 0px)';
-    }
-
-    // Fundo do Player acompanha os batidões
-    bgAmbientCover.style.transform = `scale(${1.05 + bassNorm * 0.12})`;
-  } else {
-    discWrap.style.transform = 'scale(1)';
-    playerEl.style.transform = 'translate(0px, 0px)';
-  }
-
-  // 2. BARRAS DO VISUALIZADOR (Mapeamento de Médios/Agudos)
-  const barCount = visualizerBars.length;
-  for (let i = 0; i < barCount; i++) {
-    // Mapeia os índices do array de frequências para a quantidade de barras
-    const dataIdx = Math.floor((i / barCount) * (dataArray.length - 8));
-    const val = dataArray[dataIdx] / 255; // 0.0 a 1.0
-
-    // Se estiver tocando, redimensiona a altura da barra via scaleY
-    const barScale = isTrackPlaying ? Math.max(0.12, val * 1.5) : 0.1;
-    visualizerBars[i].style.transform = `scaleY(${barScale})`;
-  }
+  visualizerBars.forEach(bar => {
+    bar.style.animationDuration = `${duracaoBounce}s`;
+  });
 }
 
 /* ======================================================
    ATALHOS E CONTROLES DE TECLADO
    ====================================================== */
 document.addEventListener('keydown', e => {
-  // Ignora atalhos se o usuário estiver digitando em campos de texto
   if (document.activeElement.tagName === 'INPUT') return;
 
   const key = e.key.toLowerCase();
@@ -595,8 +518,11 @@ function fmt(ms) {
 }
 
 function setPlaybackState(isPlaying) {
-  isTrackPlaying = isPlaying;
-  discAnim.style.animationPlayState = isPlaying ? 'running' : 'paused';
+  const state = isPlaying ? 'running' : 'paused';
+  discAnim.style.animationPlayState = state;
+  visualizerBars.forEach(bar => {
+    bar.style.animationPlayState = state;
+  });
 }
 
 async function handleSpotifyCallback() {

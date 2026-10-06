@@ -29,7 +29,9 @@ will-change: transform;
 
 /* Topo */
 .top{position:relative;z-index:3;display:flex;flex-direction:column;gap:12px;align-items:center;margin-top:10px}
+.top-info{display:flex;gap:8px;align-items:center}
 .live{display:flex;gap:8px;align-items:center;font-weight:900;letter-spacing:2px;font-size:15px;color:#fff;background:rgba(255,255,255,0.06);padding:6px 16px;border-radius:999px;border:1px solid rgba(255,255,255,0.12)}
+.bpm-badge{font-weight:800;font-size:13px;color:#00eaff;background:rgba(0,234,255,0.1);padding:6px 14px;border-radius:999px;border:1px solid rgba(0,234,255,0.25)}
 .dot{width:10px;height:10px;border-radius:50%;background:#ff315d;box-shadow:0 0 14px #ff315d;animation:pulse 1.2s infinite}
 @keyframes pulse{50%{transform:scale(.6);opacity:.5}}
 
@@ -157,7 +159,10 @@ will-change: transform;
 <div class="grid"></div>
 
 <div class="top">
-  <div class="live"><i class="dot"></i> LIVE MUSIC</div>
+  <div class="top-info">
+    <div class="live"><i class="dot"></i> LIVE MUSIC</div>
+    <div class="bpm-badge" id="bpmBadge">⚡ 120 BPM</div>
+  </div>
   <div class="top-actions" id="topActions">
     <button class="badge-btn audio-btn" id="startAudioBtn">🎤 OUVIR ÁUDIO</button>
     <button class="badge-btn" id="bgToggleBtn">✨ FUNDO: ON</button>
@@ -246,8 +251,26 @@ const discAnim = document.getElementById('discAnim');
 const discWrap = document.getElementById('discWrap');
 const glowAnim = document.getElementById('glowAnim');
 const visualizerBars = document.querySelectorAll('.bar');
+const bpmBadge = document.getElementById('bpmBadge');
 
 let currentTrackId = null;
+
+/* ======================================================
+   CONTROLE DE BPM
+   ====================================================== */
+let bpm = 120;
+const passoBpm = 5;
+const bpmMinimo = 40;
+const bpmMaximo = 300;
+
+function alterarBpm(valor) {
+  bpm = Math.min(bpmMaximo, Math.max(bpmMinimo, bpm + valor));
+  bpmBadge.textContent = `⚡ ${bpm} BPM`;
+  
+  // Atualiza a velocidade de rotação do disco sincronizada ao BPM (quanto maior o BPM, mais rápido gira)
+  const duracaoRotacao = (60 / bpm) * 8; // cálculo proporcional de velocidade
+  discAnim.style.animationDuration = `${duracaoRotacao}s`;
+}
 
 /* ======================================================
    WEB AUDIO API - VISUALIZADOR EM TEMPO REAL (REAL AUDIO)
@@ -349,10 +372,27 @@ function renderAudioFrame() {
    ATALHOS E CONTROLES DE TECLADO
    ====================================================== */
 document.addEventListener('keydown', e => {
-  if (e.key === 'a' || e.key === 'A') {
-    if (document.activeElement.tagName === 'INPUT') return;
+  // Ignora atalhos se o usuário estiver digitando em campos de texto
+  if (document.activeElement.tagName === 'INPUT') return;
+
+  const key = e.key.toLowerCase();
+
+  // Tecla L: Aumenta o BPM
+  if (key === 'l') {
+    alterarBpm(passoBpm);
+  }
+  
+  // Tecla K: Diminui o BPM
+  if (key === 'k') {
+    alterarBpm(-passoBpm);
+  }
+
+  // Tecla A: Painel de Ações do topo
+  if (key === 'a') {
     document.getElementById('topActions').classList.toggle('active');
   }
+
+  // F11: Tela Cheia
   if (e.key === 'F11') { 
     e.preventDefault(); 
     document.documentElement.requestFullscreen?.(); 

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Music Live Player - TikTok Edition</title>
+<title>Music Live Player - TikTok Edition com GIFs</title>
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;font-family:'Inter',Segoe UI,Arial,sans-serif;background:#030307;color:#fff}
@@ -127,20 +127,33 @@ animation:slideUp 0.3s ease;
 .anim-btn.rose{border-color:#ff336655;color:#ff6688}
 .anim-btn.bolt{border-color:#00eaff55;color:#00eaff}
 .anim-btn.money{border-color:#1ed76055;color:#1ed760}
-.anim-btn.fire{border-color:#ff770055;color:#ffaa00}
+.anim-btn.gif-btn{border-color:#ff00ff55;color:#ff66ff;grid-column: span 4;}
 
-/* Partículas e Flashes */
+/* Partículas, Flashes e GIFs Interativos na Tela */
 .particle-container{position:absolute;inset:0;pointer-events:none;z-index:10;overflow:hidden}
 .particle{position:absolute;top:-50px;font-size:22px;user-select:none;animation:fall linear forwards}
 @keyframes fall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(360deg);opacity:0}}
+
+.floating-gif-interaction{
+position:absolute;width:140px;height:140px;border-radius:16px;object-fit:cover;
+box-shadow:0 10px 30px rgba(0,0,0,0.8);border:2px solid rgba(255,255,255,0.3);
+z-index:15;pointer-events:none;animation:floatUpAnim 2.5s ease-out forwards;
+}
+@keyframes floatUpAnim{
+  0%{transform:translate(-50%, 400px) scale(0.4);opacity:0}
+  20%{transform:translate(-50%, 0px) scale(1.1);opacity:1}
+  80%{transform:translate(-50%, -150px) scale(1);opacity:1}
+  100%{transform:translate(-50%, -300px) scale(0.8);opacity:0}
+}
+
 .lightning-flash{position:absolute;inset:0;background:#ffffff;opacity:0;pointer-events:none;z-index:9}
 .lightning-active{animation:flashAnim 0.4s ease-out}
 @keyframes flashAnim{0%{opacity:0.8}20%{opacity:0.1}40%{opacity:0.6}100%{opacity:0}}
 
-/* Modal Config Client ID */
+/* Modal Config Client ID e GIFs */
 .modal-overlay{position:absolute;inset:0;z-index:20;display:none;align-items:center;justify-content:center;background:#02030acc;backdrop-filter:blur(12px)}
 .modal-overlay.show{display:flex}
-.edit-box{width:88%;padding:20px;border-radius:18px;background:linear-gradient(145deg,#11162a,#080b16);border:1px solid #ffffff1c;box-shadow:0 20px 80px #000;text-align:center}
+.edit-box{width:90%;max-width:400px;padding:20px;border-radius:18px;background:linear-gradient(145deg,#11162a,#080b16);border:1px solid #ffffff1c;box-shadow:0 20px 80px #000;text-align:center}
 .edit-title{font-size:16px;font-weight:900;color:#1ed760}
 .edit-subtitle{color:#7f8bad;font-size:11px;margin:5px 0 12px;line-height:1.4}
 .edit-box label{display:block;margin:8px 0 4px;color:#b8c3df;font-size:11px;font-weight:700;text-align:left}
@@ -149,6 +162,14 @@ animation:slideUp 0.3s ease;
 .edit-actions button{flex:1;padding:10px;border-radius:10px;font-weight:800;font-size:11px;cursor:pointer}
 .cancel{background:#ffffff0c;border:1px solid #ffffff15;color:#aab4d0}
 .save{background:#1ed760;border:0;color:#000}
+
+/* Estilo do Modal de GIFs */
+.gif-results{display:grid;grid-template-columns:repeat(3, 1fr);gap:8px;max-height:180px;overflow-y:auto;margin-top:10px;padding:4px}
+.gif-thumb{width:100%;height:70px;object-fit:cover;border-radius:8px;cursor:pointer;border:2px solid transparent;transition:all 0.2s}
+.gif-thumb:hover{border-color:#00eaff;transform:scale(1.03)}
+.favorites-bar{display:flex;gap:6px;overflow-x:auto;padding:6px 0;margin-top:8px}
+.fav-chip{background:rgba(255,255,255,0.08);border:1px solid #ffffff20;border-radius:20px;padding:4px 10px;font-size:10px;color:#fff;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:4px}
+.fav-chip:hover{background:rgba(255,255,255,0.2)}
 
 /* Fundo Dinâmico */
 .dynamic-bg{position:absolute;inset:-20%;z-index:0;opacity:0;transition:opacity 0.8s ease;pointer-events:none}
@@ -183,6 +204,7 @@ transform:scale(1.1);pointer-events:none;
     <button class="badge-btn" id="bgToggleBtn">✨ FUNDO: ON</button>
     <button class="badge-btn connect-btn" id="connectNavBtn">🎧 SPOTIFY</button>
     <button class="badge-btn disconnect-btn" id="disconnectNavBtn">❌ SAIR</button>
+    <button class="badge-btn" id="openGifModalBtn">🖼️ GIFS</button>
     <button class="badge-btn" id="openConfigBtn">⚙ ID</button>
   </div>
 </div>
@@ -194,7 +216,6 @@ transform:scale(1.1);pointer-events:none;
     <div class="disc" id="discAnim"></div>
   </div>
 
-  <!-- Caixa de Letras Sincronizada -->
   <div class="lyrics-box" id="lyricsBox">
     <div class="lyrics-title-tag">🎤 Letra ao Vivo</div>
     <div class="lyrics-content" id="lyricsContent">Aguardando música...</div>
@@ -216,9 +237,37 @@ transform:scale(1.1);pointer-events:none;
     <button class="anim-btn rose" onclick="triggerEffect('rose')">🌹 <span>Rosas</span></button>
     <button class="anim-btn bolt" onclick="triggerEffect('bolt')">⚡ <span>Raios</span></button>
     <button class="anim-btn money" onclick="triggerEffect('money')">💰 <span>Grana</span></button>
-    <button class="anim-btn fire" onclick="triggerEffect('fire')">🔥 <span>Fogo</span></button>
+    <button class="anim-btn gif-btn" id="openGifModalShortcut">🖼️ <span>Pesquisar e Enviar GIF</span></button>
   </div>
 </div>
+</div>
+
+<!-- Modal de Pesquisa e Favoritos de GIFs -->
+<div class="modal-overlay" id="gifModal">
+  <div class="edit-box">
+    <div class="edit-title">🖼️ Central de GIFs para Live</div>
+    <div class="edit-subtitle">Busque qualquer GIF na web, clique para disparar na tela ou salve nos favoritos!</div>
+    
+    <label>Pesquisar GIF (Ex: cat dance, fire, party)</label>
+    <div style="display:flex; gap:6px;">
+      <input id="gifSearchInput" type="text" placeholder="Digite o tema do GIF...">
+      <button id="searchGifBtn" class="save" style="width:90px; margin-top:0;">Buscar</button>
+    </div>
+
+    <label style="margin-top:10px;">⭐ Seus GIFs Favoritos</label>
+    <div class="favorites-bar" id="favoritesBar">
+      <!-- Preenchido via JavaScript -->
+    </div>
+
+    <label style="margin-top:10px;">Resultados da Busca:</label>
+    <div class="gif-results" id="gifResults">
+      <div style="grid-column: span 3; color: #7f8bad; font-size: 11px; padding: 10px;">Pesquise algo acima para ver os GIFs</div>
+    </div>
+
+    <div class="edit-actions">
+      <button id="closeGifModal" class="cancel">Fechar</button>
+    </div>
+  </div>
 </div>
 
 <!-- Modal Config Client ID -->
@@ -261,25 +310,129 @@ const duration = document.getElementById('duration');
 const discWrap = document.getElementById('discWrap');
 const discAnim = document.getElementById('discAnim');
 const bpmBadge = document.getElementById('bpmBadge');
-
 const lyricsContent = document.getElementById('lyricsContent');
+
+// Elementos do Modal de GIF
+const openGifModalBtn = document.getElementById('openGifModalBtn');
+const openGifModalShortcut = document.getElementById('openGifModalShortcut');
+const gifModal = document.getElementById('gifModal');
+const closeGifModal = document.getElementById('closeGifModal');
+const gifSearchInput = document.getElementById('gifSearchInput');
+const searchGifBtn = document.getElementById('searchGifBtn');
+const gifResults = document.getElementById('gifResults');
+const favoritesBar = document.getElementById('favoritesBar');
+
+let favoriteGifs = JSON.parse(localStorage.getItem('favorite_gifs') || '[]');
 
 // Menu de Efeitos
 const toggleEffectsBtn = document.getElementById('toggleEffectsBtn');
 const effectsMenu = document.getElementById('effectsMenu');
 
-toggleEffectsBtn.onclick = () => {
-  effectsMenu.classList.toggle('show');
-};
+toggleEffectsBtn.onclick = () => { effectsMenu.classList.toggle('show'); };
 
 let currentTrackId = null;
 let currentLyricsData = null; 
-
-// Variáveis de avanço fluido da música e da letra
 let localProgressMs = 0;
 let isPlayingState = false;
 let lastSyncTimestamp = Date.now();
 let totalDurationMs = 1;
+
+/* ======================================================
+   SISTEMA DE GIFS E FAVORITOS (Tenor API Pública)
+   ====================================================== */
+openGifModalBtn.onclick = () => { gifModal.classList.add('show'); renderFavorites(); };
+openGifModalShortcut.onclick = () => { gifModal.classList.add('show'); renderFavorites(); effectsMenu.classList.remove('show'); };
+closeGifModal.onclick = () => { gifModal.classList.remove('show'); };
+
+async function searchGifs(query) {
+  if (!query) return;
+  gifResults.innerHTML = '<div style="grid-column: span 3; color: #00eaff; font-size: 11px; padding: 10px;">Buscando GIFs...</div>';
+  try {
+    // Usando a API pública do Tenor (chave de teste integrada)
+    const res = await fetch(`https://g.tenor.com/v1/search?q=${encodeURIComponent(query)}&key=LIVDSRZULELA&limit=12&media_filter=minimal`);
+    const data = await res.json();
+    
+    gifResults.innerHTML = '';
+    if (data.results && data.results.length > 0) {
+      data.results.forEach(item => {
+        const gifUrl = item.media[0].nanogif.url;
+        const fullGifUrl = item.media[0].gif.url;
+
+        const img = document.createElement('img');
+        img.src = gifUrl;
+        img.className = 'gif-thumb';
+        
+        // Clique para disparar na tela da live
+        img.onclick = () => triggerFloatingGif(fullGifUrl);
+        
+        // Duplo clique ou botão direito para favoritar
+        img.ondblclick = (e) => {
+          e.preventDefault();
+          saveToFavorites(fullGifUrl, query);
+        };
+
+        gifResults.appendChild(img);
+      });
+    } else {
+      gifResults.innerHTML = '<div style="grid-column: span 3; color: #ff315d; font-size: 11px; padding: 10px;">Nenhum GIF encontrado</div>';
+    }
+  } catch (e) {
+    gifResults.innerHTML = '<div style="grid-column: span 3; color: #ff315d; font-size: 11px; padding: 10px;">Erro ao buscar GIFs</div>';
+  }
+}
+
+searchGifBtn.onclick = () => searchGifs(gifSearchInput.value.trim());
+gifSearchInput.onkeypress = (e) => { if (e.key === 'Enter') searchGifs(gifSearchInput.value.trim()); };
+
+function saveToFavorites(url, name) {
+  if (!favoriteGifs.some(fav => fav.url === url)) {
+    favoriteGifs.push({ url, name: name || 'GIF' });
+    localStorage.setItem('favorite_gifs', JSON.stringify(favoriteGifs));
+    renderFavorites();
+  }
+}
+
+function renderFavorites() {
+  favoritesBar.innerHTML = '';
+  if (favoriteGifs.length === 0) {
+    favoritesBar.innerHTML = '<span style="font-size:10px; color:#7f8bad; padding:4px;">Dê um duplo clique em um GIF dos resultados para salvá-lo aqui!</span>';
+    return;
+  }
+
+  favoriteGifs.forEach((fav, index) => {
+    const chip = document.createElement('div');
+    chip.className = 'fav-chip';
+    chip.innerHTML = `⭐ ${fav.name} <span style="color:#ff315d; cursor:pointer; margin-left:4px;" title="Remover">&times;</span>`;
+    
+    // Clicar no chip dispara o GIF na tela
+    chip.onclick = (e) => {
+      if (e.target.tagName === 'SPAN') {
+        favoriteGifs.splice(index, 1);
+        localStorage.setItem('favorite_gifs', JSON.stringify(favoriteGifs));
+        renderFavorites();
+      } else {
+        triggerFloatingGif(fav.url);
+      }
+    };
+    favoritesBar.appendChild(chip);
+  });
+}
+
+// Dispara o GIF flutuando no meio da tela da live
+function triggerFloatingGif(url) {
+  const container = document.getElementById('particleContainer');
+  const img = document.createElement('img');
+  img.src = url;
+  img.className = 'floating-gif-interaction';
+  
+  // Posição horizontal aleatória no centro da tela
+  const randomX = Math.floor(Math.random() * 200) - 100; // -100px a +100px do centro
+  img.style.left = `calc(50% + ${randomX}px)`;
+  img.style.bottom = '100px';
+
+  container.appendChild(img);
+  setTimeout(() => img.remove(), 2500);
+}
 
 /* ======================================================
    CONTROLE DE BPM E BATIDA AUTOMÁTICA
@@ -426,7 +579,7 @@ function updateLyricsDisplay(progressMs) {
 }
 
 /* ======================================================
-   EFEITOS DAS LIVES (ROSAS, RAIOS, DINHEIRO, FOGO)
+   EFEITOS DAS LIVES (ROSAS, RAIOS, DINHEIRO)
    ====================================================== */
 function triggerEffect(type) {
   const container = document.getElementById('particleContainer');
@@ -440,8 +593,7 @@ function triggerEffect(type) {
   const items = { 
     rose: ['🌹', '🌸', '🌺', '🥀'], 
     bolt: ['⚡', '🌩️', '✨'], 
-    money: ['💰', '💵', '💸'],
-    fire: ['🔥', '💥', '✨'] 
+    money: ['💰', '💵', '💸']
   };
   const selectedList = items[type] || ['✨'];
   const count = type === 'bolt' ? 18 : 24;
@@ -672,7 +824,6 @@ async function fetchCurrentlyPlaying() {
     const artistStr = data.item.artists.map(a => a.name).join(', ');
     artist.textContent = artistStr + ' • Spotify';
 
-    // Se mudou de música, busca a letra nova
     if (data.item.id !== currentTrackId) {
       currentTrackId = data.item.id;
       if (data.item.album && data.item.album.images.length > 0) {
@@ -684,7 +835,6 @@ async function fetchCurrentlyPlaying() {
       await fetchLyrics(data.item.name, artistStr, data.item.duration_ms);
     }
 
-    // Sincroniza o tempo local com a resposta real do Spotify
     localProgressMs = data.progress_ms || 0;
     isPlayingState = data.is_playing;
     lastSyncTimestamp = Date.now();
@@ -701,7 +851,6 @@ async function fetchCurrentlyPlaying() {
   } catch (err) { console.error('Erro ao buscar player:', err); }
 }
 
-// Loop contínuo por segundo para avançar a letra e o tempo de forma fluida
 setInterval(() => {
   if (isPlayingState) {
     const elapsed = Date.now() - lastSyncTimestamp;

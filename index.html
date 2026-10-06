@@ -81,7 +81,7 @@ animation-play-state: paused;
 
 .album-art{position:absolute;inset:35px;border-radius:50%;background-size:cover;background-position:center;opacity:.35;filter:saturate(1.3);mix-blend-mode:screen;z-index:1}
 
-/* Caixa de Letra de Música (Substituiu o Dino) */
+/* Caixa de Letra de Música */
 .lyrics-box{
 width:100%;max-height:160px;min-height:110px;
 background:rgba(10, 14, 28, 0.75);backdrop-filter:blur(16px);
@@ -273,7 +273,13 @@ toggleEffectsBtn.onclick = () => {
 };
 
 let currentTrackId = null;
-let currentLyricsData = null; // Guarda linhas sincronizadas da letra
+let currentLyricsData = null; 
+
+// Variáveis de avanço fluido da música e da letra
+let localProgressMs = 0;
+let isPlayingState = false;
+let lastSyncTimestamp = Date.now();
+let totalDurationMs = 1;
 
 /* ======================================================
    CONTROLE DE BPM E BATIDA AUTOMÁTICA
@@ -394,13 +400,11 @@ function parseLrc(lrcString) {
 function updateLyricsDisplay(progressMs) {
   if (!currentLyricsData || currentLyricsData.length === 0) return;
 
-  // Se for texto plano sem timestamp
   if (currentLyricsData.length === 1 && currentLyricsData[0].time === 0) {
     lyricsContent.innerHTML = `<div class="lyrics-line active" style="font-size:12px; white-space:pre-line;">${currentLyricsData[0].text}</div>`;
     return;
   }
 
-  // Encontrar linha atual baseada no tempo do Spotify
   let activeIndex = 0;
   for (let i = 0; i < currentLyricsData.length; i++) {
     if (progressMs >= currentLyricsData[i].time) {
@@ -657,6 +661,7 @@ async function fetchCurrentlyPlaying() {
       current.textContent = '00:00';
       duration.textContent = '00:00';
       setPlaybackState(false);
+      isPlayingState = false;
       return;
     }
 
@@ -679,26 +684,46 @@ async function fetchCurrentlyPlaying() {
       await fetchLyrics(data.item.name, artistStr, data.item.duration_ms);
     }
 
-    const progressMs = data.progress_ms || 0;
-    const durationMs = data.item.duration_ms || 1;
-    const pct = Math.min(100, (progressMs / durationMs) * 100);
+    // Sincroniza o tempo local com a resposta real do Spotify
+    localProgressMs = data.progress_ms || 0;
+    isPlayingState = data.is_playing;
+    lastSyncTimestamp = Date.now();
+    totalDurationMs = data.item.duration_ms || 1;
 
+    const pct = Math.min(100, (localProgressMs / totalDurationMs) * 100);
     fill.style.width = pct + '%';
-    current.textContent = fmt(progressMs);
-    duration.textContent = fmt(durationMs);
+    current.textContent = fmt(localProgressMs);
+    duration.textContent = fmt(totalDurationMs);
 
-    // Atualiza a linha da letra em tempo real
-    updateLyricsDisplay(progressMs);
-    setPlaybackState(data.is_playing);
+    updateLyricsDisplay(localProgressMs);
+    setPlaybackState(isPlayingState);
 
   } catch (err) { console.error('Erro ao buscar player:', err); }
 }
+
+// Loop contínuo por segundo para avançar a letra e o tempo de forma fluida
+setInterval(() => {
+  if (isPlayingState) {
+    const elapsed = Date.now() - lastSyncTimestamp;
+    let estimatedProgress = localProgressMs + elapsed;
+    
+    if (estimatedProgress > totalDurationMs) {
+      estimatedProgress = totalDurationMs;
+    }
+
+    current.textContent = fmt(estimatedProgress);
+    const pct = Math.min(100, (estimatedProgress / totalDurationMs) * 100);
+    fill.style.width = pct + '%';
+    
+    updateLyricsDisplay(estimatedProgress);
+  }
+}, 1000);
 
 (async () => {
   applyDynamicBgState();
   await handleSpotifyCallback();
   fetchCurrentlyPlaying();
-  setInterval(fetchCurrentlyPlaying, 3000);
+  setInterval(fetchCurrentlyPlaying, 4000);
 })();
 </script>
 </body>

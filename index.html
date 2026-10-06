@@ -47,7 +47,10 @@ padding: 40px 24px 30px;
 .dot{width:10px;height:10px;border-radius:50%;background:#ff315d;box-shadow:0 0 14px #ff315d;animation:pulse 1.2s infinite}
 @keyframes pulse{50%{transform:scale(.6);opacity:.5}}
 
-.top-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+/* Ações Ocultas por Padrão */
+.top-actions{display:none;gap:6px;flex-wrap:wrap;justify-content:center}
+.top-actions.active{display:flex}
+
 .badge-btn{
 padding:6px 12px;border:1px solid #ffffff20;border-radius:999px;
 background:#ffffff0d;backdrop-filter:blur(12px);font-size:10px;
@@ -197,7 +200,7 @@ transform:scale(1.1);pointer-events:none;
 
 <div class="top">
   <div class="live"><i class="dot"></i> LIVE MUSIC</div>
-  <div class="top-actions">
+  <div class="top-actions" id="topActions">
     <button class="badge-btn" id="bgToggleBtn">✨ FUNDO: ON</button>
     <button class="badge-btn connect-btn" id="connectNavBtn">🎧 SPOTIFY</button>
     <button class="badge-btn disconnect-btn" id="disconnectNavBtn">❌ SAIR</button>
@@ -321,7 +324,13 @@ function setBPM(speedSec, textLabel) {
 }
 
 document.addEventListener('keydown', e => {
+  if (e.key === 'a' || e.key === 'A') {
+    // Evita acionar se o usuário estiver digitando no campo de texto da modal
+    if (document.activeElement.tagName === 'INPUT') return;
+    document.getElementById('topActions').classList.toggle('active');
+  }
   if (e.key === 'b' || e.key === 'B') {
+    if (document.activeElement.tagName === 'INPUT') return;
     document.getElementById('secretBpmPanel').classList.toggle('active');
   }
   if (e.key === 'F11') { 

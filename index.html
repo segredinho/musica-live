@@ -3,18 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Music Live Player - Spotify Auto Sync</title>
+<title>Music Live Player - TikTok Vertical Edition</title>
 <style>
 *{box-sizing:border-box}
-html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:Inter,Segoe UI,Arial,sans-serif;background:#05050b;color:#fff}
+html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;font-family:'Inter',Segoe UI,Arial,sans-serif;background:#030307;color:#fff}
 body{display:flex;align-items:center;justify-content:center}
+
+/* Container Projetado para 9:16 (TikTok / Vertical Stream) */
 .player{
-position:relative;width:min(100vw,720px);height:100vh;max-height:1280px;overflow:hidden;
+position:relative;width:100vw;height:100vh;max-width:540px;max-height:960px;
+aspect-ratio: 9/16; overflow:hidden;
 background:
-radial-gradient(circle at 50% 25%,rgba(44,90,255,.32),transparent 30%),
-radial-gradient(circle at 15% 75%,rgba(255,0,153,.22),transparent 28%),
-radial-gradient(circle at 85% 65%,rgba(0,224,255,.20),transparent 28%),
-linear-gradient(160deg,#070812 0%,#0a0b18 45%,#03030a 100%);
+radial-gradient(circle at 50% 20%,rgba(44,90,255,.35),transparent 40%),
+radial-gradient(circle at 20% 60%,rgba(255,0,153,.25),transparent 35%),
+radial-gradient(circle at 80% 75%,rgba(0,224,255,.22),transparent 35%),
+linear-gradient(180deg,#05060e 0%,#090a18 50%,#020206 100%);
+display:flex;flex-direction:column;justify-content:space-between;
+padding: 40px 24px 30px;
 }
 
 /* Efeito de Tremor do Grave (Paredão) */
@@ -32,201 +37,154 @@ linear-gradient(160deg,#070812 0%,#0a0b18 45%,#03030a 100%);
   100% { transform: translate(0, 0) rotate(0deg); }
 }
 
-.player:before{content:"";position:absolute;inset:-30%;background:conic-gradient(from 180deg,transparent,#1d42ff22,transparent,#ff18b322,transparent);filter:blur(50px);animation:spin 18s linear infinite}
+.player:before{content:"";position:absolute;inset:-30%;background:conic-gradient(from 180deg,transparent,#1d42ff22,transparent,#ff18b322,transparent);filter:blur(60px);animation:spin 18s linear infinite;pointer-events:none}
 @keyframes spin{to{transform:rotate(360deg)}}
-.grid{position:absolute;inset:0;opacity:.12;background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:42px 42px;transform:perspective(500px) rotateX(58deg) scale(1.7);transform-origin:bottom;top:45%}
-.top{position:absolute;top:26px;left:28px;right:28px;display:flex;align-items:center;justify-content:space-between;z-index:3}
-.live{display:flex;gap:10px;align-items:center;font-weight:800;letter-spacing:1.5px;font-size:17px}
-.dot{width:11px;height:11px;border-radius:50%;background:#ff315d;box-shadow:0 0 18px #ff315d;animation:pulse 1.2s infinite}
-@keyframes pulse{50%{transform:scale(.65);opacity:.55}}
+.grid{position:absolute;inset:0;opacity:.1;background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:36px 36px;transform:perspective(500px) rotateX(58deg) scale(1.8);transform-origin:bottom;top:30%;pointer-events:none}
 
-/* Botões da Barra Superior */
-.top-actions{display:flex;gap:8px;align-items:center}
+/* Topo - Respeita a Safe Zone Superior do TikTok */
+.top{position:relative;z-index:3;display:flex;flex-direction:column;gap:12px;align-items:center;margin-top:10px}
+.live{display:flex;gap:8px;align-items:center;font-weight:900;letter-spacing:2px;font-size:15px;color:#fff;background:rgba(255,255,255,0.06);padding:6px 16px;border-radius:999px;border:1px solid rgba(255,255,255,0.12)}
+.dot{width:10px;height:10px;border-radius:50%;background:#ff315d;box-shadow:0 0 14px #ff315d;animation:pulse 1.2s infinite}
+@keyframes pulse{50%{transform:scale(.6);opacity:.5}}
+
+.top-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
 .badge-btn{
-padding:8px 14px;border:1px solid #ffffff25;border-radius:999px;
-background:#ffffff0b;backdrop-filter:blur(14px);font-size:11px;
+padding:6px 12px;border:1px solid #ffffff20;border-radius:999px;
+background:#ffffff0d;backdrop-filter:blur(12px);font-size:10px;
 color:#b9c7ff;font-weight:700;cursor:pointer;transition:all .2s ease;
-display:inline-flex;align-items:center;gap:6px;
+display:inline-flex;align-items:center;gap:4px;
 }
-.badge-btn:hover{background:#ffffff1f;border-color:#ffffff44;color:#fff}
+.badge-btn:hover{background:#ffffff22;color:#fff}
 .badge-btn.connect-btn{border-color:#1ed76088;background:#061a0cdd;color:#1ed760}
-.badge-btn.connect-btn:hover{background:#0a2914;color:#fff}
 .badge-btn.disconnect-btn{border-color:#ff315d88;background:#2a060cdd;color:#ff315d;display:none}
-.badge-btn.disconnect-btn:hover{background:#420812;color:#fff}
 
-.center{position:absolute;top:12%;left:0;right:0;text-align:center;z-index:2}
-.title{font-size:19px;letter-spacing:5px;color:#b7c5ff;font-weight:700}
-.subtitle{margin-top:6px;font-size:13px;color:#7f8bb0}
+/* Centro - Visualizador "Grave de Paredão" */
+.center{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:auto 0}
+.title{font-size:13px;letter-spacing:4px;color:#94a5e0;font-weight:800;text-transform:uppercase}
+.subtitle{margin-top:4px;font-size:11px;color:#6f7b9c;font-weight:500}
 
-/* Efeito Paredão: Estrutura Principal de Batida */
 .disc-wrap{
-position:relative;width:350px;height:350px;margin:35px auto 25px;
+position:relative;width:280px;height:280px;margin:20px auto;
 animation:subwooferKick var(--bpm-speed, 0.52s) ease-in-out infinite alternate;
 animation-play-state: paused;
 }
 @keyframes subwooferKick {
-  0% { transform: scale(0.98); }
+  0% { transform: scale(0.97); }
   50% { transform: scale(1.02); }
-  100% { transform: scale(1.09); }
+  100% { transform: scale(1.08); }
 }
 
 .glow{
-position:absolute;inset:10px;border-radius:50%;
+position:absolute;inset:0px;border-radius:50%;
 background:linear-gradient(45deg,var(--c1, #00eaff),var(--c2, #6c4dff),var(--c3, #ff27bc));
-filter:blur(25px);opacity:.7;transition:background 1.5s ease;
+filter:blur(30px);opacity:.75;transition:background 1.5s ease;
 animation:glowBass var(--bpm-speed, 0.52s) ease-in-out infinite alternate;
 animation-play-state: paused;
 }
 @keyframes glowBass {
-  0% { filter: blur(20px); opacity: 0.5; transform: scale(0.95); }
-  100% { filter: blur(45px); opacity: 0.95; transform: scale(1.18); }
+  0% { filter: blur(20px); opacity: 0.5; transform: scale(0.92); }
+  100% { filter: blur(50px); opacity: 0.95; transform: scale(1.2); }
 }
 
-.disc{position:absolute;inset:25px;border-radius:50%;background:repeating-radial-gradient(circle,#090a10 0 7px,#161923 8px 10px);border:2px solid #ffffff16;box-shadow:0 0 50px #294dff66, inset 0 0 40px #000;animation:record 7s linear infinite}
+.disc{position:absolute;inset:18px;border-radius:50%;background:repeating-radial-gradient(circle,#090a10 0 7px,#161923 8px 10px);border:2px solid #ffffff18;box-shadow:0 0 40px #294dff66, inset 0 0 30px #000;animation:record 7s linear infinite}
 @keyframes record{to{transform:rotate(360deg)}}
-.disc:before{content:"";position:absolute;inset:43%;border-radius:50%;background:linear-gradient(135deg,var(--c1, #00eaff),var(--c2, #6b5cff) 55%,var(--c3, #ff2ac3));box-shadow:0 0 30px #00eaff88;transition:background 1.5s ease}
-.disc:after{content:"♫";position:absolute;left:0;right:0;top:44%;text-align:center;font-size:29px;font-weight:900;color:white;z-index:2}
+.disc:before{content:"";position:absolute;inset:40%;border-radius:50%;background:linear-gradient(135deg,var(--c1, #00eaff),var(--c2, #6b5cff) 55%,var(--c3, #ff2ac3));box-shadow:0 0 25px #00eaff88;transition:background 1.5s ease}
+.disc:after{content:"♫";position:absolute;left:0;right:0;top:43%;text-align:center;font-size:24px;font-weight:900;color:white;z-index:2}
 
-/* Visualizer "Grave de Paredão" */
+/* Visualizer Bars */
 .visualizer{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:4px;z-index:3}
-.bar{width:4px;border-radius:10px;background:linear-gradient(var(--c1, #00eaff),var(--c2, #7c4dff),var(--c3, #ff35c8));box-shadow:0 0 12px #4c6cff;animation:bars calc(var(--bpm-speed, 0.52s) * 0.8) ease-in-out infinite alternate;transition:background 1.5s ease}
-.bar:nth-child(1){height:38px;animation-delay:.02s}.bar:nth-child(2){height:62px;animation-delay:.08s}.bar:nth-child(3){height:85px;animation-delay:.15s}.bar:nth-child(4){height:55px;animation-delay:.05s}.bar:nth-child(5){height:95px;animation-delay:.20s}.bar:nth-child(6){height:65px;animation-delay:.12s}.bar:nth-child(7){height:42px;animation-delay:.18s}
+.bar{width:4px;border-radius:10px;background:linear-gradient(var(--c1, #00eaff),var(--c2, #7c4dff),var(--c3, #ff35c8));box-shadow:0 0 10px #4c6cff;animation:bars calc(var(--bpm-speed, 0.52s) * 0.8) ease-in-out infinite alternate;transition:background 1.5s ease}
+.bar:nth-child(1){height:32px;animation-delay:.02s}.bar:nth-child(2){height:54px;animation-delay:.08s}.bar:nth-child(3){height:75px;animation-delay:.15s}.bar:nth-child(4){height:48px;animation-delay:.05s}.bar:nth-child(5){height:85px;animation-delay:.20s}.bar:nth-child(6){height:58px;animation-delay:.12s}.bar:nth-child(7){height:36px;animation-delay:.18s}
 @keyframes bars{
   0%{transform:scaleY(0.2);opacity:.4}
   100%{transform:scaleY(1.35);opacity:1;filter:brightness(1.3);}
 }
 
-.track{position:absolute;top:58%;left:38px;right:38px;z-index:3}
-.trackname{font-size:27px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.artist{font-size:14px;color:#8e99bb;margin-top:5px}
-.progress{margin-top:19px;height:6px;border-radius:20px;background:#ffffff18;overflow:hidden}
+/* Informações da Música */
+.track{position:relative;z-index:3;width:100%;text-align:center;padding:0 10px;margin-bottom:15px}
+.trackname{font-size:23px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-0.3px}
+.artist{font-size:13px;color:#a0accf;margin-top:4px;font-weight:600}
+.progress{margin-top:16px;height:5px;border-radius:20px;background:#ffffff18;overflow:hidden}
 .fill{width:0%;height:100%;background:linear-gradient(90deg,var(--c1, #00eaff),var(--c2, #6d55ff),var(--c3, #ff32bf));box-shadow:0 0 15px #5b6dff;transition:width 0.3s ease, background 1.5s ease}
-.times{display:flex;justify-content:space-between;margin-top:8px;color:#747e9e;font-size:11px}
+.times{display:flex;justify-content:space-between;margin-top:6px;color:#6d7799;font-size:10px;font-weight:700}
 
-/* Seção Inferior com Animações Divertidas */
-.bottom{position:absolute;left:28px;right:28px;bottom:28px;z-index:3}
+/* Seção Inferior de Efeitos - Respeita a Safe Zone do Chat do TikTok */
+.bottom{position:relative;z-index:3;width:100%;margin-bottom:10px}
 .effects-card{
-border:1px solid #ffffff18;background:#ffffff08;backdrop-filter:blur(18px);
-border-radius:20px;padding:16px 18px;text-align:center;
+border:1px solid #ffffff18;background:rgba(255,255,255,0.05);backdrop-filter:blur(18px);
+border-radius:18px;padding:12px 14px;text-align:center;
 }
 .effects-title{
-font-size:11px;font-weight:800;letter-spacing:1.5px;color:#aeb9d8;
-margin-bottom:12px;text-transform:uppercase;
+font-size:10px;font-weight:800;letter-spacing:1.2px;color:#8e9bc4;
+margin-bottom:8px;text-transform:uppercase;
 }
-.effects-btns{display:flex;gap:10px;justify-content:center}
+.effects-btns{display:flex;gap:8px;justify-content:center}
 .anim-btn{
-flex:1;padding:10px 14px;border-radius:14px;border:1px solid #ffffff20;
-background:rgba(255,255,255,0.06);color:#fff;font-size:13px;font-weight:700;
+flex:1;padding:8px 10px;border-radius:12px;border:1px solid #ffffff20;
+background:rgba(255,255,255,0.06);color:#fff;font-size:11px;font-weight:700;
 cursor:pointer;transition:all .2s ease;display:flex;align-items:center;
-justify-content:center;gap:6px;box-shadow:0 4px 15px rgba(0,0,0,0.2);
+justify-content:center;gap:4px;
 }
-.anim-btn:hover{transform:translateY(-2px);background:rgba(255,255,255,0.15)}
+.anim-btn:hover{transform:translateY(-2px);background:rgba(255,255,255,0.18)}
 .anim-btn.rose{border-color:#ff336655;color:#ff6688}
-.anim-btn.rose:hover{background:#ff336622;box-shadow:0 0 20px #ff336644}
 .anim-btn.bolt{border-color:#00eaff55;color:#00eaff}
-.anim-btn.bolt:hover{background:#00eaff22;box-shadow:0 0 20px #00eaff44}
 .anim-btn.money{border-color:#1ed76055;color:#1ed760}
-.anim-btn.money:hover{background:#1ed76022;box-shadow:0 0 20px #1ed76044}
 
-/* Container de Partículas e Flash de Raio */
-.particle-container{
-position:absolute;inset:0;pointer-events:none;z-index:10;overflow:hidden;
-}
-.particle{
-position:absolute;top:-50px;font-size:26px;user-select:none;
-animation:fall linear forwards;
-}
-@keyframes fall{
-0%{transform:translateY(0) rotate(0deg);opacity:1}
-100%{transform:translateY(110vh) rotate(360deg);opacity:0}
-}
-.lightning-flash{
-position:absolute;inset:0;background:#ffffff;opacity:0;pointer-events:none;z-index:9;
-}
-.lightning-active{
-animation:flashAnim 0.4s ease-out;
-}
-@keyframes flashAnim{
-0%{opacity:0.8}20%{opacity:0.1}40%{opacity:0.6}100%{opacity:0}
-}
-
-@media(max-width:520px){.disc-wrap{transform:scale(.82);margin-top:10px;margin-bottom:-15px}.center{top:9%}.track{top:57%}.trackname{font-size:22px}.top{left:18px;right:18px}.bottom{left:18px;right:18px}.effects-btns{flex-direction:column;gap:6px}}
+/* Efeitos Especiais */
+.particle-container{position:absolute;inset:0;pointer-events:none;z-index:10;overflow:hidden}
+.particle{position:absolute;top:-50px;font-size:24px;user-select:none;animation:fall linear forwards}
+@keyframes fall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(360deg);opacity:0}}
+.lightning-flash{position:absolute;inset:0;background:#ffffff;opacity:0;pointer-events:none;z-index:9}
+.lightning-active{animation:flashAnim 0.4s ease-out}
+@keyframes flashAnim{0%{opacity:0.8}20%{opacity:0.1}40%{opacity:0.6}100%{opacity:0}}
 
 /* Painel de Configuração */
-.edit-panel{
-position:absolute;inset:0;z-index:20;display:none;
-align-items:center;justify-content:center;
-background:#02030acc;backdrop-filter:blur(12px);
-}
+.edit-panel{position:absolute;inset:0;z-index:20;display:none;align-items:center;justify-content:center;background:#02030acc;backdrop-filter:blur(12px)}
 .edit-panel.show{display:flex}
-.edit-box{
-width:min(88%,440px);padding:25px;border-radius:24px;
-background:linear-gradient(145deg,#11162a,#080b16);
-border:1px solid #ffffff1c;box-shadow:0 20px 80px #000;
-}
-.edit-title{font-size:22px;font-weight:900;color:#1ed760}
-.edit-subtitle{color:#7f8bad;font-size:12px;margin:6px 0 18px;line-height:1.4}
-.edit-box label{display:block;margin:12px 0 6px;color:#b8c3df;font-size:12px;font-weight:700}
-.edit-box input{
-width:100%;padding:12px 14px;border-radius:12px;
-border:1px solid #ffffff18;background:#ffffff09;color:#fff;
-outline:none;font-size:13px;
-}
-.edit-box input:focus{border-color:#1ed76088;box-shadow:0 0 15px #1ed76018}
-.edit-actions{display:flex;gap:10px;margin-top:22px}
-.edit-actions button{
-flex:1;padding:13px;border-radius:12px;font-weight:800;
-font-size:12px;cursor:pointer;
-}
+.edit-box{width:88%;padding:22px;border-radius:20px;background:linear-gradient(145deg,#11162a,#080b16);border:1px solid #ffffff1c;box-shadow:0 20px 80px #000}
+.edit-title{font-size:18px;font-weight:900;color:#1ed760}
+.edit-subtitle{color:#7f8bad;font-size:11px;margin:6px 0 14px;line-height:1.4}
+.edit-box label{display:block;margin:10px 0 4px;color:#b8c3df;font-size:11px;font-weight:700}
+.edit-box input{width:100%;padding:10px 12px;border-radius:10px;border:1px solid #ffffff18;background:#ffffff09;color:#fff;outline:none;font-size:12px}
+.edit-actions{display:flex;gap:8px;margin-top:18px}
+.edit-actions button{flex:1;padding:11px;border-radius:10px;font-weight:800;font-size:11px;cursor:pointer}
 .cancel{background:#ffffff0c;border:1px solid #ffffff15;color:#aab4d0}
 .save{background:#1ed760;border:0;color:#000}
 
-/* Painel Secreto de Controle de BPM (Ativado pela Tecla 'B') */
+/* Painel Secreto de BPM (Tecla 'B') */
 .secret-bpm-panel{
 position:fixed;bottom:15px;right:15px;z-index:100;
 background:rgba(10, 14, 28, 0.94);backdrop-filter:blur(16px);
-border:1px solid rgba(255, 255, 255, 0.2);border-radius:16px;
-padding:14px 18px;box-shadow:0 10px 30px rgba(0,0,0,0.8);
-display:none;flex-direction:column;gap:10px;width:260px;
-color:#fff;font-size:12px;
+border:1px solid rgba(255, 255, 255, 0.2);border-radius:14px;
+padding:12px 14px;box-shadow:0 10px 30px rgba(0,0,0,0.8);
+display:none;flex-direction:column;gap:8px;width:220px;color:#fff;font-size:11px;
 }
 .secret-bpm-panel.active{display:flex}
 .bpm-header{display:flex;justify-content:space-between;align-items:center;font-weight:800;color:#00eaff}
 .bpm-controls{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.bpm-btn{
-padding:8px;border-radius:8px;border:1px solid #ffffff25;
-background:#ffffff10;color:#fff;font-weight:700;cursor:pointer;
-transition:all 0.2s ease;text-align:center;font-size:11px;
-}
+.bpm-btn{padding:6px;border-radius:6px;border:1px solid #ffffff25;background:#ffffff10;color:#fff;font-weight:700;cursor:pointer;text-align:center;font-size:10px}
 .bpm-btn:hover{background:#00eaff33;border-color:#00eaff}
-.toggle-shake-btn{
-grid-column: span 2;
-margin-top: 4px;
-background: #ff315d22;
-border-color: #ff315d88;
-color: #ff6688;
-}
-.toggle-shake-btn:hover{background:#ff315d44;border-color:#ff315d}
+.toggle-shake-btn{grid-column:span 2;margin-top:2px;background:#ff315d22;border-color:#ff315d88;color:#ff6688}
 
-/* Fundo Dinâmico Que Muda com a Música */
-.dynamic-bg{position:absolute;inset:-20%;z-index:0;opacity:0;transition:opacity 0.8s ease}
+/* Fundo Dinâmico */
+.dynamic-bg{position:absolute;inset:-20%;z-index:0;opacity:0;transition:opacity 0.8s ease;pointer-events:none}
 .dynamic-bg.active{opacity:.85}
 .dynamic-bg:before,.dynamic-bg:after{content:"";position:absolute;border-radius:50%;filter:blur(80px);transition:background 1.5s ease}
-.dynamic-bg:before{width:60%;height:60%;left:0%;top:10%;background:radial-gradient(circle, var(--c1, #00eaff88), var(--c2, #7c4dff44));animation:orb1 6s ease-in-out infinite alternate}
-.dynamic-bg:after{width:55%;height:55%;right:0%;bottom:5%;background:radial-gradient(circle, var(--c3, #ff24c488), var(--c1, #1e57ff44));animation:orb2 8s ease-in-out infinite alternate}
-@keyframes orb1{0%{transform:translate(10%,10%) scale(1)}100%{transform:translate(35%,30%) scale(1.3)}}
-@keyframes orb2{0%{transform:translate(-10%,-10%) scale(1)}100%{transform:translate(-30%,-25%) scale(1.25)}}
+.dynamic-bg:before{width:70%;height:70%;left:-10%;top:10%;background:radial-gradient(circle, var(--c1, #00eaff88), var(--c2, #7c4dff44));animation:orb1 6s ease-in-out infinite alternate}
+.dynamic-bg:after{width:65%;height:65%;right:-10%;bottom:5%;background:radial-gradient(circle, var(--c3, #ff24c488), var(--c1, #1e57ff44));animation:orb2 8s ease-in-out infinite alternate}
+@keyframes orb1{0%{transform:translate(5%,5%) scale(1)}100%{transform:translate(25%,20%) scale(1.2)}}
+@keyframes orb2{0%{transform:translate(-5%,-5%) scale(1)}100%{transform:translate(-20%,-15%) scale(1.15)}}
 
 .bg-ambient-cover{
 position:absolute;inset:-10%;background-size:cover;background-position:center;
-filter:blur(60px) brightness(0.45);opacity:0;z-index:0;transition:opacity 1s ease, background-image 1.5s ease;
-transform:scale(1.1);
+filter:blur(60px) brightness(0.4);opacity:0;z-index:0;transition:opacity 1s ease, background-image 1.5s ease;
+transform:scale(1.1);pointer-events:none;
 }
-.bg-ambient-cover.active{opacity:.45}
+.bg-ambient-cover.active{opacity:.5}
 .bg-ambient-cover.playing{animation:pulseBg var(--bpm-speed, 0.52s) ease-in-out infinite alternate}
 @keyframes pulseBg{0%{transform:scale(1.05)}100%{transform:scale(1.2)}}
 
-.album-art{position:absolute;inset:72px;border-radius:50%;background-size:cover;background-position:center;opacity:.25;filter:saturate(1.3);mix-blend-mode:screen;z-index:1;transition:background-image 0.8s ease}
+.album-art{position:absolute;inset:55px;border-radius:50%;background-size:cover;background-position:center;opacity:.28;filter:saturate(1.3);mix-blend-mode:screen;z-index:1;transition:background-image 0.8s ease}
 </style>
 </head>
 <body>
@@ -238,51 +196,51 @@ transform:scale(1.1);
 <div class="grid"></div>
 
 <div class="top">
-<div class="live"><i class="dot"></i> LIVE MUSIC</div>
-<div class="top-actions">
-  <button class="badge-btn" id="bgToggleBtn">✨ FUNDO: ON</button>
-  <button class="badge-btn connect-btn" id="connectNavBtn">🎧 CONECTAR SPOTIFY</button>
-  <button class="badge-btn disconnect-btn" id="disconnectNavBtn">❌ DESCONECTAR</button>
-  <button class="badge-btn" id="openConfigBtn">⚙ ID</button>
-</div>
+  <div class="live"><i class="dot"></i> LIVE MUSIC</div>
+  <div class="top-actions">
+    <button class="badge-btn" id="bgToggleBtn">✨ FUNDO: ON</button>
+    <button class="badge-btn connect-btn" id="connectNavBtn">🎧 SPOTIFY</button>
+    <button class="badge-btn disconnect-btn" id="disconnectNavBtn">❌ SAIR</button>
+    <button class="badge-btn" id="openConfigBtn">⚙ ID</button>
+  </div>
 </div>
 
 <div class="center">
-<div class="title">MUSIC LIVE PLAYER</div>
-<div class="subtitle" id="statusSub">Aguardando conexão com o Spotify...</div>
+  <div class="title">Tiktok Live Player</div>
+  <div class="subtitle" id="statusSub">Aguardando conexão...</div>
 
-<div class="disc-wrap" id="discWrap">
-<div class="glow" id="glowAnim"></div>
-<div class="album-art" id="albumArt"></div>
-<div class="disc" id="discAnim"></div>
-<div class="visualizer" id="visualizerAnim">
-<i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i>
-<i class="bar"></i><i class="bar"></i><i class="bar"></i>
-</div>
-</div>
+  <div class="disc-wrap" id="discWrap">
+    <div class="glow" id="glowAnim"></div>
+    <div class="album-art" id="albumArt"></div>
+    <div class="disc" id="discAnim"></div>
+    <div class="visualizer" id="visualizerAnim">
+      <i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i>
+      <i class="bar"></i><i class="bar"></i><i class="bar"></i>
+    </div>
+  </div>
 </div>
 
 <div class="track">
-<div class="trackname" id="trackName">Nenhuma música tocando</div>
-<div class="artist" id="artist">Conecte sua conta do Spotify</div>
+  <div class="trackname" id="trackName">Nenhuma música tocando</div>
+  <div class="artist" id="artist">Conecte sua conta do Spotify</div>
 
-<div class="progress"><div class="fill" id="fill"></div></div>
-<div class="times"><span id="current">00:00</span><span id="duration">00:00</span></div>
+  <div class="progress"><div class="fill" id="fill"></div></div>
+  <div class="times"><span id="current">00:00</span><span id="duration">00:00</span></div>
 </div>
 
 <div class="bottom">
-<div class="effects-card">
-<div class="effects-title">✨ ANIMAÇÕES DIVERTIDAS DA LIVE</div>
-<div class="effects-btns">
-  <button class="anim-btn rose" onclick="triggerEffect('rose')">🌹 Rosas</button>
-  <button class="anim-btn bolt" onclick="triggerEffect('bolt')">⚡ Raios</button>
-  <button class="anim-btn money" onclick="triggerEffect('money')">💰 Dinheiro</button>
-</div>
-</div>
+  <div class="effects-card">
+    <div class="effects-title">✨ Interações da Live</div>
+    <div class="effects-btns">
+      <button class="anim-btn rose" onclick="triggerEffect('rose')">🌹 Rosas</button>
+      <button class="anim-btn bolt" onclick="triggerEffect('bolt')">⚡ Raios</button>
+      <button class="anim-btn money" onclick="triggerEffect('money')">💰 Dinheiro</button>
+    </div>
+  </div>
 </div>
 </div>
 
-<!-- Painel Secreto de Controle de BPM e Tremor -->
+<!-- Painel Secreto BPM -->
 <div class="secret-bpm-panel" id="secretBpmPanel">
   <div class="bpm-header">
     <span>🔊 CONTROLE DE BPM</span>
@@ -297,19 +255,18 @@ transform:scale(1.1);
   </div>
 </div>
 
+<!-- Modal Config Client ID -->
 <div class="edit-panel" id="editPanel">
-<div class="edit-box">
-<div class="edit-title">⚙ Configurar Client ID</div>
-<div class="edit-subtitle">Insira o seu <b>Client ID</b> do aplicativo cadastrado no Spotify Developer Dashboard.</div>
-
-<label>Client ID do App Spotify</label>
-<input id="clientIdInput" type="text" placeholder="Cole seu Client ID aqui">
-
-<div class="edit-actions">
-<button id="cancelConfig" class="cancel">Cancelar</button>
-<button id="saveClientIdBtn" class="save">Salvar Client ID</button>
-</div>
-</div>
+  <div class="edit-box">
+    <div class="edit-title">⚙ Configurar Client ID</div>
+    <div class="edit-subtitle">Insira o seu <b>Client ID</b> cadastrado no Spotify Developer Dashboard.</div>
+    <label>Client ID do App Spotify</label>
+    <input id="clientIdInput" type="text" placeholder="Cole seu Client ID aqui">
+    <div class="edit-actions">
+      <button id="cancelConfig" class="cancel">Cancelar</button>
+      <button id="saveClientIdBtn" class="save">Salvar</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -344,11 +301,9 @@ const visualizerBars = document.querySelectorAll('.bar');
 let currentTrackId = null;
 let isShakeActive = true;
 
-/* Alternar Tremor do Grave */
 function toggleShake() {
   isShakeActive = !isShakeActive;
   const shakeBtn = document.getElementById('toggleShakeBtn');
-  
   if (isShakeActive) {
     playerEl.classList.add('shake-enabled');
     shakeBtn.textContent = '📴 Tremor: ON';
@@ -360,27 +315,21 @@ function toggleShake() {
   }
 }
 
-/* Controle Secreto de BPM */
 function setBPM(speedSec, textLabel) {
   playerEl.style.setProperty('--bpm-speed', speedSec + 's');
   document.getElementById('bpmValueDisplay').textContent = textLabel;
 }
 
-/* Atalhos de Teclado Secretos */
 document.addEventListener('keydown', e => {
-  // Pressionar a tecla 'B' ou 'b' abre/fecha o painel secreto
   if (e.key === 'b' || e.key === 'B') {
-    const panel = document.getElementById('secretBpmPanel');
-    panel.classList.toggle('active');
+    document.getElementById('secretBpmPanel').classList.toggle('active');
   }
-  
   if (e.key === 'F11') { 
     e.preventDefault(); 
     document.documentElement.requestFullscreen?.(); 
   }
 });
 
-/* Extração Automática de Cores da Capa do Álbum */
 function updateColorsFromImage(imgUrl) {
   const img = new Image();
   img.crossOrigin = "Anonymous";
@@ -389,13 +338,11 @@ function updateColorsFromImage(imgUrl) {
   img.onload = () => {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
-    canvas.width = 50;
-    canvas.height = 50;
+    canvas.width = 50; canvas.height = 50;
     ctx.drawImage(img, 0, 0, 50, 50);
 
     const imgData = ctx.getImageData(0, 0, 50, 50).data;
-    let r1 = 0, g1 = 0, b1 = 0;
-    let count = 0;
+    let r1 = 0, g1 = 0, b1 = 0, count = 0;
 
     for (let i = 0; i < imgData.length; i += 16) {
       r1 += imgData[i];
@@ -417,10 +364,8 @@ function updateColorsFromImage(imgUrl) {
   };
 }
 
-/* Função para Disparar Efeitos Visuais */
 function triggerEffect(type) {
   const container = document.getElementById('particleContainer');
-  
   if (type === 'bolt') {
     const flash = document.getElementById('lightningFlash');
     flash.classList.remove('lightning-active');
@@ -428,14 +373,9 @@ function triggerEffect(type) {
     flash.classList.add('lightning-active');
   }
 
-  const items = {
-    rose: ['🌹', '🌸', '🌺', '🥀'],
-    bolt: ['⚡', '🌩️', '✨', '⚡'],
-    money: ['💰', '💵', '💸', '🤑']
-  };
-
+  const items = { rose: ['🌹', '🌸', '🌺', '🥀'], bolt: ['⚡', '🌩️', '✨'], money: ['💰', '💵', '💸'] };
   const selectedList = items[type] || ['✨'];
-  const count = type === 'bolt' ? 22 : 30;
+  const count = type === 'bolt' ? 20 : 28;
 
   for (let i = 0; i < count; i++) {
     setTimeout(() => {
@@ -445,7 +385,7 @@ function triggerEffect(type) {
       el.style.left = Math.random() * 92 + '%';
       
       const durationSec = (Math.random() * 1.8 + 1.2).toFixed(2);
-      const sizePx = Math.floor(Math.random() * 18 + 22);
+      const sizePx = Math.floor(Math.random() * 16 + 20);
       
       el.style.fontSize = sizePx + 'px';
       el.style.animationDuration = durationSec + 's';
@@ -511,7 +451,7 @@ function logoutSpotify() {
 
   trackName.textContent = 'Nenhuma música tocando';
   artist.textContent = 'Conecte sua conta do Spotify';
-  statusSub.textContent = 'Clique em "CONECTAR SPOTIFY" para autorizar';
+  statusSub.textContent = 'Clique em "SPOTIFY" para autorizar';
   albumArt.style.backgroundImage = 'none';
   bgAmbientCover.style.backgroundImage = 'none';
   fill.style.width = '0%';
@@ -528,9 +468,7 @@ disconnectNavBtn.onclick = logoutSpotify;
 function generateRandomString(length) {
   let text = '';
   let possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  for (let i = 0; i < length; i++) {
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-  }
+  for (let i = 0; i < length; i++) text += possible.charAt(Math.floor(Math.random() * possible.length));
   return text;
 }
 
@@ -653,7 +591,7 @@ async function refreshAccessToken() {
 async function fetchCurrentlyPlaying() {
   let token = localStorage.getItem('spotify_access_token');
   if (!token) {
-    statusSub.textContent = 'Clique em "CONECTAR SPOTIFY" para iniciar';
+    statusSub.textContent = 'Clique em "SPOTIFY" para iniciar';
     setPlaybackState(false);
     updateUIState();
     return;
@@ -692,7 +630,7 @@ async function fetchCurrentlyPlaying() {
 
     trackName.textContent = data.item.name;
     artist.textContent = data.item.artists.map(a => a.name).join(', ') + ' • Spotify';
-    statusSub.textContent = 'Sincronizado ao vivo com Spotify';
+    statusSub.textContent = 'Sincronizado ao vivo';
 
     if (data.item.id !== currentTrackId) {
       currentTrackId = data.item.id;

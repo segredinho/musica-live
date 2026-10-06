@@ -19,7 +19,7 @@ radial-gradient(circle at 20% 60%,rgba(255,0,153,.25),transparent 35%),
 radial-gradient(circle at 80% 75%,rgba(0,224,255,.22),transparent 35%),
 linear-gradient(180deg,#05060e 0%,#090a18 50%,#020206 100%);
 display:flex;flex-direction:column;justify-content:space-between;
-padding: 40px 24px 30px;
+padding: 30px 24px 20px;
 will-change: transform;
 }
 
@@ -28,7 +28,7 @@ will-change: transform;
 .grid{position:absolute;inset:0;opacity:.1;background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:36px 36px;transform:perspective(500px) rotateX(58deg) scale(1.8);transform-origin:bottom;top:30%;pointer-events:none}
 
 /* Topo */
-.top{position:relative;z-index:3;display:flex;flex-direction:column;gap:12px;align-items:center;margin-top:10px}
+.top{position:relative;z-index:3;display:flex;flex-direction:column;gap:12px;align-items:center;margin-top:5px}
 .top-info{display:flex;gap:8px;align-items:center}
 .live{display:flex;gap:8px;align-items:center;font-weight:900;letter-spacing:2px;font-size:15px;color:#fff;background:rgba(255,255,255,0.06);padding:6px 16px;border-radius:999px;border:1px solid rgba(255,255,255,0.12)}
 .bpm-badge{font-weight:800;font-size:13px;color:#00eaff;background:rgba(0,234,255,0.1);padding:6px 14px;border-radius:999px;border:1px solid rgba(0,234,255,0.25)}
@@ -54,7 +54,7 @@ display:inline-flex;align-items:center;gap:4px;
 .subtitle{margin-top:4px;font-size:11px;color:#6f7b9c;font-weight:500}
 
 .disc-wrap{
-position:relative;width:280px;height:280px;margin:20px auto;
+position:relative;width:240px;height:240px;margin:15px auto;
 will-change: transform;
 }
 
@@ -81,7 +81,7 @@ animation-play-state: paused;
 position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:6px;z-index:3;
 }
 .bar{
-width:5px;height:90px;border-radius:10px;
+width:5px;height:80px;border-radius:10px;
 background:linear-gradient(var(--c1, #00eaff),var(--c2, #7c4dff),var(--c3, #ff35c8));
 box-shadow:0 0 12px #4c6cff;transition:background 1.5s ease;
 transform-origin: center;
@@ -110,23 +110,27 @@ animation-play-state: paused;
 }
 
 /* Informações da Música */
-.track{position:relative;z-index:3;width:100%;text-align:center;padding:0 10px;margin-bottom:15px}
-.trackname{font-size:23px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-0.3px}
-.artist{font-size:13px;color:#a0accf;margin-top:4px;font-weight:600}
-.progress{margin-top:16px;height:5px;border-radius:20px;background:#ffffff18;overflow:hidden}
+.track{position:relative;z-index:3;width:100%;text-align:center;padding:0 10px;margin-bottom:10px}
+.trackname{font-size:20px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-0.3px}
+.artist{font-size:12px;color:#a0accf;margin-top:4px;font-weight:600}
+.progress{margin-top:12px;height:5px;border-radius:20px;background:#ffffff18;overflow:hidden}
 .fill{width:0%;height:100%;background:linear-gradient(90deg,var(--c1, #00eaff),var(--c2, #6d55ff),var(--c3, #ff32bf));box-shadow:0 0 15px #5b6dff;transition:width 0.3s ease, background 1.5s ease}
 .times{display:flex;justify-content:space-between;margin-top:6px;color:#6d7799;font-size:10px;font-weight:700}
 
-/* Efeitos das Lives */
-.bottom{position:relative;z-index:3;width:100%;margin-bottom:10px}
-.effects-card{border:1px solid #ffffff18;background:rgba(255,255,255,0.05);backdrop-filter:blur(18px);border-radius:18px;padding:12px 14px;text-align:center}
-.effects-title{font-size:10px;font-weight:800;letter-spacing:1.2px;color:#8e9bc4;margin-bottom:8px;text-transform:uppercase}
-.effects-btns{display:flex;gap:8px;justify-content:center}
-.anim-btn{flex:1;padding:8px 10px;border-radius:12px;border:1px solid #ffffff20;background:rgba(255,255,255,0.06);color:#fff;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s ease;display:flex;align-items:center;justify-content:center;gap:4px}
+/* Efeitos e Botões de Batida */
+.bottom{position:relative;z-index:3;width:100%;display:flex;flex-direction:column;gap:8px;margin-bottom:5px}
+.effects-card{border:1px solid #ffffff18;background:rgba(255,255,255,0.05);backdrop-filter:blur(18px);border-radius:16px;padding:10px 12px;text-align:center}
+.effects-title{font-size:10px;font-weight:800;letter-spacing:1.2px;color:#8e9bc4;margin-bottom:6px;text-transform:uppercase}
+.effects-btns{display:flex;gap:6px;justify-content:center}
+
+.anim-btn{flex:1;padding:7px 8px;border-radius:10px;border:1px solid #ffffff20;background:rgba(255,255,255,0.06);color:#fff;font-size:10px;font-weight:700;cursor:pointer;transition:all .2s ease;display:flex;align-items:center;justify-content:center;gap:4px}
 .anim-btn:hover{transform:translateY(-2px);background:rgba(255,255,255,0.18)}
 .anim-btn.rose{border-color:#ff336655;color:#ff6688}
 .anim-btn.bolt{border-color:#00eaff55;color:#00eaff}
 .anim-btn.money{border-color:#1ed76055;color:#1ed760}
+
+.beat-btn{border-color:#00ffcc55;color:#00ffcc;background:rgba(0,255,204,0.08);font-weight:800}
+.beat-btn:active, .beat-btn.active-pad{background:#00ffcc;color:#000;box-shadow:0 0 15px #00ffcc;transform:scale(0.95)}
 
 /* Partículas e Flashes */
 .particle-container{position:absolute;inset:0;pointer-events:none;z-index:10;overflow:hidden}
@@ -215,6 +219,18 @@ will-change: transform;
 </div>
 
 <div class="bottom">
+  <!-- Botões de Batida/Percussão -->
+  <div class="effects-card">
+    <div class="effects-title">🥁 Batidas de Fundo (Teclado)</div>
+    <div class="effects-btns">
+      <button class="anim-btn beat-btn" id="btn-b" onclick="triggerBeat('b')">🥁 Kick [B]</button>
+      <button class="anim-btn beat-btn" id="btn-s" onclick="triggerBeat('s')">💥 Snare [S]</button>
+      <button class="anim-btn beat-btn" id="btn-h" onclick="triggerBeat('h')">🔔 Hi-Hat [H]</button>
+      <button class="anim-btn beat-btn" id="btn-c" onclick="triggerBeat('c')">👏 Clap [C]</button>
+    </div>
+  </div>
+
+  <!-- Interações da Live -->
   <div class="effects-card">
     <div class="effects-title">✨ Interações da Live</div>
     <div class="effects-btns">
@@ -271,6 +287,104 @@ const bpmBadge = document.getElementById('bpmBadge');
 let currentTrackId = null;
 
 /* ======================================================
+   SINTETIZADOR DE ÁUDIO PARA BATIDAS (WEB AUDIO API)
+   ====================================================== */
+let audioCtx = null;
+
+function getAudioContext() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+  return audioCtx;
+}
+
+function playKickSound() {
+  const ctx = getAudioContext();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+
+  // Batida grave forte caindo de 170Hz para 30Hz
+  osc.frequency.setValueAtTime(170, ctx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(30, ctx.currentTime + 0.4);
+
+  gain.gain.setValueAtTime(1.2, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+
+  osc.start(ctx.currentTime);
+  osc.stop(ctx.currentTime + 0.4);
+}
+
+function playSnareSound() {
+  const ctx = getAudioContext();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+
+  osc.type = 'triangle';
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+
+  osc.frequency.setValueAtTime(220, ctx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(70, ctx.currentTime + 0.2);
+
+  gain.gain.setValueAtTime(0.8, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+
+  osc.start(ctx.currentTime);
+  osc.stop(ctx.currentTime + 0.2);
+}
+
+function playHiHatSound() {
+  const ctx = getAudioContext();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+
+  osc.type = 'square';
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+
+  osc.frequency.setValueAtTime(8000, ctx.currentTime);
+
+  gain.gain.setValueAtTime(0.3, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.08);
+
+  osc.start(ctx.currentTime);
+  osc.stop(ctx.currentTime + 0.08);
+}
+
+function triggerBeat(key) {
+  const k = key.toLowerCase();
+  let btnId = '';
+
+  if (k === 'b') {
+    playKickSound();
+    btnId = 'btn-b';
+  } else if (k === 's') {
+    playSnareSound();
+    btnId = 'btn-s';
+  } else if (k === 'h') {
+    playHiHatSound();
+    btnId = 'btn-h';
+  } else if (k === 'c') {
+    playSnareSound();
+    btnId = 'btn-c';
+  }
+
+  if (btnId) {
+    const btn = document.getElementById(btnId);
+    if (btn) {
+      btn.classList.add('active-pad');
+      setTimeout(() => btn.classList.remove('active-pad'), 120);
+    }
+  }
+}
+
+/* ======================================================
    CONTROLE DE BPM E ANIMAÇÃO
    ====================================================== */
 let bpm = 120;
@@ -282,7 +396,6 @@ function alterarBpm(valor) {
   bpm = Math.min(bpmMaximo, Math.max(bpmMinimo, bpm + valor));
   bpmBadge.textContent = `⚡ ${bpm} BPM`;
   
-  // Atualiza velocidade de rotação do disco e velocidade de pulso do visualizador
   const duracaoRotacao = (60 / bpm) * 8; 
   const duracaoBounce = (60 / bpm);
   
@@ -299,6 +412,11 @@ document.addEventListener('keydown', e => {
   if (document.activeElement.tagName === 'INPUT') return;
 
   const key = e.key.toLowerCase();
+
+  // Disparo de batida na tecla B e outras
+  if (['b', 's', 'h', 'c'].includes(key)) {
+    triggerBeat(key);
+  }
 
   // Tecla L: Aumenta o BPM
   if (key === 'l') {

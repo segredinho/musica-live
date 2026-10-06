@@ -52,7 +52,10 @@ display:inline-flex;align-items:center;gap:4px;
 .center{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:auto 0;gap:8px}
 
 .disc-compact-wrap{
-position:relative;width:110px;height:110px;
+position:relative;
+width: var(--disc-size, 110px);
+height: var(--disc-size, 110px);
+transition: width 0.3s ease, height 0.3s ease;
 will-change: transform;
 animation: autoBeatPulse 0.5s ease-in-out infinite alternate;
 animation-play-state: paused;
@@ -194,7 +197,7 @@ transform:scale(1.1);pointer-events:none;
     <div class="disc" id="discAnim"></div>
   </div>
 
-  <!-- Caixa de Letras Sincronizada -->
+  <!-- Caixa de Letra de Música -->
   <div class="lyrics-box" id="lyricsBox">
     <div class="lyrics-title-tag">🎤 Letra ao Vivo</div>
     <div class="lyrics-content" id="lyricsContent">Aguardando música...</div>
@@ -275,11 +278,23 @@ toggleEffectsBtn.onclick = () => {
 let currentTrackId = null;
 let currentLyricsData = null; 
 
-// Variáveis de avanço fluido da música e da letra
 let localProgressMs = 0;
 let isPlayingState = false;
 let lastSyncTimestamp = Date.now();
 let totalDurationMs = 1;
+
+/* ======================================================
+   CONTROLE DO TAMANHO DO DISCO (ATALHO TECLA 'A')
+   ====================================================== */
+let discSizePx = 110; // Tamanho inicial padrão
+const discSizes = [110, 140, 170, 200]; // Opções de tamanhos que alternam ao apertar 'A'
+let discSizeIndex = 0;
+
+function alterarTamanhoDisco() {
+  discSizeIndex = (discSizeIndex + 1) % discSizes.length;
+  discSizePx = discSizes[discSizeIndex];
+  playerEl.style.setProperty('--disc-size', `${discSizePx}px`);
+}
 
 /* ======================================================
    CONTROLE DE BPM E BATIDA AUTOMÁTICA
@@ -307,9 +322,11 @@ alterarBpm(0);
 document.addEventListener('keydown', e => {
   if (document.activeElement.tagName === 'INPUT') return;
   const key = e.key.toLowerCase();
+  
   if (key === 'l') alterarBpm(passoBpm);
   if (key === 'k') alterarBpm(-passoBpm);
-  if (key === 'a') document.getElementById('topActions').classList.toggle('active');
+  if (key === 'a') alterarTamanhoDisco(); // Pressione 'A' para aumentar/alternar o tamanho do disco!
+  if (key === 's') document.getElementById('topActions').classList.toggle('active');
   if (e.key === 'F11') { e.preventDefault(); document.documentElement.requestFullscreen?.(); }
 });
 
@@ -672,7 +689,6 @@ async function fetchCurrentlyPlaying() {
     const artistStr = data.item.artists.map(a => a.name).join(', ');
     artist.textContent = artistStr + ' • Spotify';
 
-    // Se mudou de música, busca a letra nova
     if (data.item.id !== currentTrackId) {
       currentTrackId = data.item.id;
       if (data.item.album && data.item.album.images.length > 0) {
@@ -684,7 +700,6 @@ async function fetchCurrentlyPlaying() {
       await fetchLyrics(data.item.name, artistStr, data.item.duration_ms);
     }
 
-    // Sincroniza o tempo local com a resposta real do Spotify
     localProgressMs = data.progress_ms || 0;
     isPlayingState = data.is_playing;
     lastSyncTimestamp = Date.now();
@@ -701,7 +716,6 @@ async function fetchCurrentlyPlaying() {
   } catch (err) { console.error('Erro ao buscar player:', err); }
 }
 
-// Loop contínuo por segundo para avançar a letra e o tempo de forma fluida
 setInterval(() => {
   if (isPlayingState) {
     const elapsed = Date.now() - lastSyncTimestamp;

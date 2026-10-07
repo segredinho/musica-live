@@ -2,14 +2,20 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Music Live Player - TikTok Edition</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Music Live Player - Hip Hop & Rap Edition</title>
 <style>
-*{box-sizing:border-box}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;font-family:'Inter',Segoe UI,Arial,sans-serif;background:#030307;color:#fff}
 body{display:flex;align-items:center;justify-content:center}
 
-/* Container Projetado para 9:16 (TikTok / Vertical Stream) */
+:root {
+  --disc-size: 140px;
+  --c1: #00eaff;
+  --c2: #7c4dff;
+  --c3: #ff24c4;
+}
+
 .player{
 position:relative;width:100vw;height:100vh;max-width:540px;max-height:960px;
 aspect-ratio: 9/16; overflow:hidden;
@@ -21,17 +27,17 @@ linear-gradient(180deg,#05060e 0%,#090a18 50%,#020206 100%);
 display:flex;flex-direction:column;justify-content:space-between;
 padding: 16px 16px 12px;
 will-change: transform;
+box-shadow: 0 0 50px rgba(0,0,0,0.8);
 }
 
 .player:before{content:"";position:absolute;inset:-30%;background:conic-gradient(from 180deg,transparent,#1d42ff22,transparent,#ff18b322,transparent);filter:blur(60px);animation:spin 18s linear infinite;pointer-events:none}
 @keyframes spin{to{transform:rotate(360deg)}}
 .grid{position:absolute;inset:0;opacity:.1;background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:36px 36px;transform:perspective(500px) rotateX(58deg) scale(1.8);transform-origin:bottom;top:30%;pointer-events:none}
 
-/* Topo */
 .top{position:relative;z-index:3;display:flex;flex-direction:column;gap:6px;align-items:center}
 .top-info{display:flex;gap:8px;align-items:center}
 .live{display:flex;gap:6px;align-items:center;font-weight:900;letter-spacing:2px;font-size:12px;color:#fff;background:rgba(255,255,255,0.06);padding:4px 10px;border-radius:999px;border:1px solid rgba(255,255,255,0.12)}
-.bpm-badge{font-weight:800;font-size:11px;color:#00eaff;background:rgba(0,234,255,0.1);padding:4px 10px;border-radius:999px;border:1px solid rgba(0,234,255,0.25)}
+.bpm-badge{font-weight:800;font-size:11px;color:#00eaff;background:rgba(0,234,255,0.1);padding:4px 10px;border-radius:999px;border:1px solid rgba(0,234,255,0.25);transition:all 0.2s ease}
 .dot{width:6px;height:6px;border-radius:50%;background:#ff315d;box-shadow:0 0 10px #ff315d;animation:pulse 1.2s infinite}
 @keyframes pulse{50%{transform:scale(.6);opacity:.5}}
 
@@ -48,29 +54,140 @@ display:inline-flex;align-items:center;gap:4px;
 .badge-btn.connect-btn{border-color:#1ed76088;background:#061a0cdd;color:#1ed760}
 .badge-btn.disconnect-btn{border-color:#ff315d88;background:#2a060cdd;color:#ff315d;display:none}
 
-/* Centro - Visualizador e Letras da Música */
-.center{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:auto 0;gap:8px}
+.center{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:auto 0;gap:10px}
 
 .disc-compact-wrap{
 position:relative;
-width: var(--disc-size, 110px);
-height: var(--disc-size, 110px);
+width: var(--disc-size, 140px);
+height: var(--disc-size, 140px);
 transition: width 0.3s ease, height 0.3s ease;
 will-change: transform;
 animation: autoBeatPulse 0.5s ease-in-out infinite alternate;
 animation-play-state: paused;
+display:flex;align-items:center;justify-content:center;
 }
 
 @keyframes autoBeatPulse {
   0% { transform: scale(0.96); }
-  100% { transform: scale(1.04); }
+  100% { transform: scale(1.05); }
 }
 
-.glow{
-position:absolute;inset:0px;border-radius:50%;
-background:linear-gradient(45deg,var(--c1, #00eaff),var(--c2, #6c4dff),var(--c3, #ff27bc));
-filter:blur(16px);opacity:.7;transition:background 1.5s ease;
+.equalizer-svg {
+position:absolute;
+inset:-26px;
+width: calc(100% + 52px);
+height: calc(100% + 52px);
+pointer-events:none;
+z-index:1;
+animation: spinReverse 12s linear infinite;
+animation-play-state: paused;
 }
+@keyframes spinReverse { to { transform: rotate(-360deg); } }
+
+.glow{
+position:absolute;inset:-6px;border-radius:50%;
+background:linear-gradient(45deg,var(--c1, #00eaff),var(--c2, #6c4dff),var(--c3, #ff27bc));
+filter:blur(18px);opacity:.75;transition:all 0.5s ease;
+}
+
+/* Fumaça e Névoa Hip-Hop */
+.smoke-fog {
+position: absolute; inset: -40px; border-radius: 50%;
+background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0) 70%);
+filter: blur(20px); pointer-events: none; opacity: 0.6; z-index: 0;
+animation: smokeDrift 6s ease-in-out infinite alternate;
+}
+@keyframes smokeDrift {
+  0% { transform: scale(0.9) rotate(0deg); opacity:0.4; }
+  100% { transform: scale(1.15) rotate(180deg); opacity:0.75; }
+}
+
+/* 1. Ouro / Bling Street Theme */
+.disc-compact-wrap.effect-gold .glow {
+background: radial-gradient(circle, #ffd700 0%, #ff8800 60%, #ff0055 100%);
+filter: blur(22px); opacity:0.95;
+}
+.disc-compact-wrap.effect-gold .disc {
+border: 3px solid #ffe600;
+box-shadow: 0 0 35px rgba(255,215,0,0.8), inset 0 0 20px #000;
+background: repeating-radial-gradient(circle,#1a1400 0 4px,#332800 5px 7px);
+}
+.disc-compact-wrap.effect-gold .gold-chain {
+display: block !important;
+}
+
+.gold-chain {
+display:none;
+position:absolute;
+inset: -14px;
+border-radius: 50%;
+border: 6px dashed #ffd700;
+box-shadow: 0 0 20px #ffd700, inset 0 0 10px #ffaa00;
+animation: spinChain 8s linear infinite;
+pointer-events:none;
+z-index:5;
+}
+@keyframes spinChain { to { transform: rotate(360deg); } }
+
+/* 2. Fogo / Trap Heat Theme */
+.disc-compact-wrap.effect-fire .glow {
+background: radial-gradient(circle, #ff3300 0%, #ff8000 50%, #ff0055 100%);
+filter: blur(28px); opacity:1;
+animation: fireGlow 0.3s ease-in-out infinite alternate;
+}
+@keyframes fireGlow { 0% { opacity:0.75; filter:blur(20px); } 100% { opacity:1; filter:blur(32px); } }
+.disc-compact-wrap.effect-fire .disc {
+border: 2px solid #ff5500;
+box-shadow: 0 0 40px #ff3300, inset 0 0 25px #ff1a00;
+}
+.disc-compact-wrap.effect-fire .fire-particles {
+display:block !important;
+}
+.fire-particles {
+display:none; position:absolute; inset:-20px; border-radius:50%; pointer-events:none; z-index:0;
+background: radial-gradient(circle, transparent 40%, rgba(255,68,0,0.5) 80%);
+filter: blur(10px);
+animation: firePulse 0.4s infinite alternate;
+}
+@keyframes firePulse { 0% { transform: scale(0.96); } 100% { transform: scale(1.1); } }
+
+/* 3. Cyber Neon Theme */
+.disc-compact-wrap.effect-cyber .glow {
+background: linear-gradient(135deg, #00ffcc, #ff007f, #00eaff);
+filter: blur(24px); opacity:0.95;
+}
+.disc-compact-wrap.effect-cyber .disc {
+border: 2px solid #00ffcc;
+box-shadow: 0 0 35px #00ffcc, inset 0 0 20px #ff007f;
+}
+
+/* 4. Glitch / Drill Street Theme & HUD Overlay */
+.disc-compact-wrap.effect-glitch .album-art {
+animation: glitchArt 0.7s infinite steps(2);
+}
+.disc-compact-wrap.effect-glitch .hud-scanner {
+display: block !important;
+}
+
+@keyframes glitchArt {
+0% { transform: translate(0,0) scale(1); filter: saturate(2) hue-rotate(0deg); }
+25% { transform: translate(-3px, 2px) scale(1.02); filter: saturate(3) hue-rotate(90deg); }
+50% { transform: translate(3px, -2px) scale(0.98); filter: saturate(1) hue-rotate(180deg); }
+75% { transform: translate(-2px, -1px) scale(1.01); filter: saturate(4) hue-rotate(270deg); }
+100% { transform: translate(0,0) scale(1); filter: saturate(2) hue-rotate(360deg); }
+}
+
+.hud-scanner {
+display: none; position: absolute; inset: -12px; border-radius: 50%;
+border: 1px dashed #00eaff; opacity: 0.8; pointer-events: none; z-index: 6;
+animation: hudSpin 4s linear infinite;
+}
+.hud-scanner:before {
+content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+background: #00eaff; box-shadow: 0 0 10px #00eaff; animation: hudScan 1.5s ease-in-out infinite alternate;
+}
+@keyframes hudSpin { to { transform: rotate(360deg); } }
+@keyframes hudScan { 0% { top: 0%; } 100% { top: 95%; } }
 
 .disc{
 position:absolute;inset:8px;border-radius:50%;
@@ -78,35 +195,61 @@ background:repeating-radial-gradient(circle,#090a10 0 4px,#161923 5px 7px);
 border:2px solid #ffffff18;box-shadow:0 0 24px #294dff66, inset 0 0 16px #000;
 animation:record 4s linear infinite;
 animation-play-state: paused;
+z-index:2;
 }
 @keyframes record{to{transform:rotate(360deg)}}
-.disc:before{content:"";position:absolute;inset:38%;border-radius:50%;background:linear-gradient(135deg,var(--c1, #00eaff),var(--c2, #6b5cff) 55%,var(--c3, #ff2ac3));box-shadow:0 0 16px #00eaff88}
+.disc:before{content:"";position:absolute;inset:38%;border-radius:50%;background:linear-gradient(135deg,var(--c1, #00eaff),var(--c2, #6b5cff) 55%,var(--c3, #ff2ac3));box-shadow:0 0 16px #00eaff88;z-index:2}
 
-.album-art{position:absolute;inset:30px;border-radius:50%;background-size:cover;background-position:center;opacity:.35;filter:saturate(1.3);mix-blend-mode:screen;z-index:1}
+.album-art{
+position:absolute;inset:28px;border-radius:50%;
+background-size:cover;background-position:center;
+opacity:.88;filter:saturate(1.3) contrast(1.1);
+mix-blend-mode:normal;z-index:3;
+border: 2px solid rgba(255,255,255,0.4);
+box-shadow: inset 0 0 12px rgba(0,0,0,0.8), 0 0 18px rgba(255,255,255,0.2);
+transition: all 0.4s ease;
+}
+.album-art:hover {
+transform: scale(1.04);
+filter: saturate(1.8) contrast(1.2);
+}
 
-/* Caixa de Letra de Música */
+.disc-effects-selector {
+display:flex;gap:4px;background:rgba(0,0,0,0.65);backdrop-filter:blur(12px);
+padding:4px 8px;border-radius:20px;border:1px solid rgba(255,255,255,0.15);
+margin-top: 2px;z-index: 5;
+}
+.effect-chip {
+font-size:9px;font-weight:800;padding:4px 9px;border-radius:12px;
+background:rgba(255,255,255,0.08);color:#aab4d0;border:1px solid transparent;
+cursor:pointer;transition:all 0.2s ease;
+}
+.effect-chip.active, .effect-chip:hover {
+background:linear-gradient(135deg, #00eaff, #ff007f);
+color:#fff;border-color:rgba(255,255,255,0.5);
+box-shadow:0 0 12px rgba(0,234,255,0.6);
+}
+
 .lyrics-box{
-width:100%;max-height:130px;min-height:90px;
-background:rgba(10, 14, 28, 0.75);backdrop-filter:blur(16px);
+width:100%;max-height:120px;min-height:85px;
+background:rgba(10, 14, 28, 0.78);backdrop-filter:blur(16px);
 border:1px solid rgba(255, 255, 255, 0.12);border-radius:14px;
-padding:10px 14px;display:flex;flex-direction:column;align-items:center;
+padding:8px 12px;display:flex;flex-direction:column;align-items:center;
 justify-content:center;text-align:center;overflow:hidden;position:relative;
 box-shadow: 0 8px 24px rgba(0,0,0,0.5);
 }
-.lyrics-title-tag{font-size:8px;letter-spacing:2px;color:#00eaff;font-weight:800;text-transform:uppercase;margin-bottom:4px}
-.lyrics-content{font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.4;transition:all 0.3s ease;max-width:100%}
+.lyrics-title-tag{font-size:8px;letter-spacing:2px;color:#00eaff;font-weight:800;text-transform:uppercase;margin-bottom:3px}
+.lyrics-content{font-size:12px;font-weight:700;color:#e2e8f0;line-height:1.35;transition:all 0.3s ease;max-width:100%}
 .lyrics-line{opacity:0.4;transition:all 0.3s ease;margin:2px 0;font-size:11px}
-.lyrics-line.active{opacity:1;color:#00eaff;font-size:14px;transform:scale(1.02);text-shadow:0 0 10px rgba(0,234,255,0.4)}
+.lyrics-line.active{opacity:1;color:#00eaff;font-size:13px;transform:scale(1.02);text-shadow:0 0 10px rgba(0,234,255,0.5)}
 
-/* Informações da Música & Minutagem Compactos */
 .track{position:relative;z-index:3;width:100%;text-align:center;padding:0 4px;margin-bottom:4px}
 .trackname{font-size:15px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-0.3px}
 .artist{font-size:10px;color:#a0accf;margin-top:1px;font-weight:600}
-.progress{margin-top:6px;height:3px;border-radius:20px;background:#ffffff18;overflow:hidden}
+.progress{margin-top:6px;height:4px;border-radius:20px;background:#ffffff18;overflow:hidden;position:relative}
 .fill{width:0%;height:100%;background:linear-gradient(90deg,var(--c1, #00eaff),var(--c2, #6d55ff),var(--c3, #ff32bf));box-shadow:0 0 10px #5b6dff;transition:width 0.3s ease}
 .times{display:flex;justify-content:space-between;margin-top:3px;color:#6d7799;font-size:9px;font-weight:700}
 
-/* Interações da Live e Opções Agrupadas */
 .bottom{position:relative;z-index:3;width:100%;display:flex;flex-direction:column;gap:6px}
 .main-effects-btn{
 width:100%;padding:8px;border-radius:10px;border:1px solid rgba(255,255,255,0.25);
@@ -118,8 +261,8 @@ transition:all .3s ease;display:flex;align-items:center;justify-content:center;g
 .main-effects-btn:hover{transform:scale(1.02);box-shadow:0 0 16px rgba(0,234,255,0.4)}
 
 .effects-menu{
-display:none;grid-template-columns:repeat(5, 1fr);gap:6px;padding:8px;border-radius:12px;
-background:rgba(10,12,24,0.9);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.15);
+display:none;grid-template-columns:repeat(4, 1fr);gap:6px;padding:8px;border-radius:12px;
+background:rgba(10,12,24,0.92);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.15);
 animation:slideUp 0.3s ease;
 }
 .effects-menu.show{display:grid}
@@ -131,9 +274,7 @@ animation:slideUp 0.3s ease;
 .anim-btn.bolt{border-color:#00eaff55;color:#00eaff}
 .anim-btn.money{border-color:#1ed76055;color:#1ed760}
 .anim-btn.fire{border-color:#ff770055;color:#ffaa00}
-.anim-btn.plane{border-color:#00bcff55;color:#80dfff}
 
-/* Partículas, Aviões e Flashes */
 .particle-container{position:absolute;inset:0;pointer-events:none;z-index:10;overflow:hidden}
 .particle{position:absolute;top:-50px;font-size:22px;user-select:none;animation:fall linear forwards}
 @keyframes fall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(360deg);opacity:0}}
@@ -141,39 +282,6 @@ animation:slideUp 0.3s ease;
 .lightning-active{animation:flashAnim 0.4s ease-out}
 @keyframes flashAnim{0%{opacity:0.8}20%{opacity:0.1}40%{opacity:0.6}100%{opacity:0}}
 
-/* Animações de Curva para Aviões */
-.plane-particle{
-position:absolute;user-select:none;pointer-events:none;z-index:12;
-filter:drop-shadow(0 0 10px rgba(0,234,255,0.6));
-will-change: transform, opacity;
-}
-
-@keyframes flyCurveLeftToRight {
-  0% { transform: translate(-20vw, 85vh) rotate(-35deg) scale(0.6); opacity: 0; }
-  15% { opacity: 1; }
-  50% { transform: translate(40vw, 35vh) rotate(15deg) scale(1.2); }
-  85% { opacity: 1; }
-  100% { transform: translate(110vw, -10vh) rotate(-40deg) scale(0.7); opacity: 0; }
-}
-
-@keyframes flyCurveRightToLeft {
-  0% { transform: translate(110vw, 80vh) rotate(-145deg) scale(0.6); opacity: 0; }
-  15% { opacity: 1; }
-  50% { transform: translate(50vw, 30vh) rotate(-190deg) scale(1.3); }
-  85% { opacity: 1; }
-  100% { transform: translate(-20vw, -10vh) rotate(-135deg) scale(0.7); opacity: 0; }
-}
-
-@keyframes flySloop {
-  0% { transform: translate(-20vw, 50vh) rotate(-10deg) scale(0.5); opacity: 0; }
-  20% { opacity: 1; }
-  40% { transform: translate(30vw, 20vh) rotate(-60deg) scale(1.1); }
-  60% { transform: translate(60vw, 40vh) rotate(45deg) scale(1.3); }
-  80% { opacity: 1; }
-  100% { transform: translate(110vw, 10vh) rotate(-20deg) scale(0.8); opacity: 0; }
-}
-
-/* Modal Config Client ID */
 .modal-overlay{position:absolute;inset:0;z-index:20;display:none;align-items:center;justify-content:center;background:#02030acc;backdrop-filter:blur(12px)}
 .modal-overlay.show{display:flex}
 .edit-box{width:88%;padding:18px;border-radius:16px;background:linear-gradient(145deg,#11162a,#080b16);border:1px solid #ffffff1c;box-shadow:0 20px 80px #000;text-align:center}
@@ -186,7 +294,6 @@ will-change: transform, opacity;
 .cancel{background:#ffffff0c;border:1px solid #ffffff15;color:#aab4d0}
 .save{background:#1ed760;border:0;color:#000}
 
-/* Fundo Dinâmico */
 .dynamic-bg{position:absolute;inset:-20%;z-index:0;opacity:0;transition:opacity 0.8s ease;pointer-events:none}
 .dynamic-bg.active{opacity:.85}
 .dynamic-bg:before,.dynamic-bg:after{content:"";position:absolute;border-radius:50%;filter:blur(80px);transition:background 1.5s ease}
@@ -224,13 +331,30 @@ transform:scale(1.1);pointer-events:none;
 </div>
 
 <div class="center">
-  <div class="disc-compact-wrap" id="discWrap">
+  <div class="disc-compact-wrap effect-gold" id="discWrap">
+    <!-- Equalizador Circular SVG Animado -->
+    <svg class="equalizer-svg" viewBox="0 0 200 200" id="eqSvg">
+      <g transform="translate(100,100)" id="eqBarsGroup"></g>
+    </svg>
+
+    <div class="smoke-fog"></div>
     <div class="glow" id="glowAnim"></div>
-    <div class="album-art" id="albumArt"></div>
+    <div class="fire-particles"></div>
+    <div class="gold-chain"></div>
+    <div class="hud-scanner"></div>
     <div class="disc" id="discAnim"></div>
+    <div class="album-art" id="albumArt"></div>
   </div>
 
-  <!-- Caixa de Letra de Música -->
+  <!-- Botões de Seleção de Efeitos do Vinil Hip-Hop / Rap -->
+  <div class="disc-effects-selector">
+    <button class="effect-chip active" onclick="setDiscEffect('gold')">👑 OURO RAP</button>
+    <button class="effect-chip" onclick="setDiscEffect('fire')">🔥 TRAP HEAT</button>
+    <button class="effect-chip" onclick="setDiscEffect('cyber')">⚡ CYBER</button>
+    <button class="effect-chip" onclick="setDiscEffect('glitch')">👾 DRILL GLITCH</button>
+  </div>
+
+  <!-- Caixa de Letras Sync da Música -->
   <div class="lyrics-box" id="lyricsBox">
     <div class="lyrics-title-tag">🎤 Letra ao Vivo</div>
     <div class="lyrics-content" id="lyricsContent">Aguardando música...</div>
@@ -253,7 +377,6 @@ transform:scale(1.1);pointer-events:none;
     <button class="anim-btn bolt" onclick="triggerEffect('bolt')">⚡ <span>Raios</span></button>
     <button class="anim-btn money" onclick="triggerEffect('money')">💰 <span>Grana</span></button>
     <button class="anim-btn fire" onclick="triggerEffect('fire')">🔥 <span>Fogo</span></button>
-    <button class="anim-btn plane" onclick="triggerEffect('plane')">✈️ <span>Aviões</span></button>
   </div>
 </div>
 </div>
@@ -301,7 +424,6 @@ const bpmBadge = document.getElementById('bpmBadge');
 
 const lyricsContent = document.getElementById('lyricsContent');
 
-// Menu de Efeitos
 const toggleEffectsBtn = document.getElementById('toggleEffectsBtn');
 const effectsMenu = document.getElementById('effectsMenu');
 
@@ -317,12 +439,73 @@ let isPlayingState = false;
 let lastSyncTimestamp = Date.now();
 let totalDurationMs = 1;
 
-/* ======================================================
-   CONTROLE DO TAMANHO DO DISCO (ATALHO TECLA 'A')
-   ====================================================== */
-let discSizePx = 110; // Tamanho inicial padrão
-const discSizes = [110, 140, 170, 200]; // Opções de tamanhos que alternam ao apertar 'A'
-let discSizeIndex = 0;
+const eqBarsGroup = document.getElementById('eqBarsGroup');
+const numBars = 36;
+const eqBars = [];
+
+for (let i = 0; i < numBars; i++) {
+  const angle = (i / numBars) * 360;
+  const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  const rad = (angle * Math.PI) / 180;
+  
+  const r1 = 82;
+  const x1 = r1 * Math.cos(rad);
+  const y1 = r1 * Math.sin(rad);
+
+  line.setAttribute('x1', x1);
+  line.setAttribute('y1', y1);
+  line.setAttribute('x2', x1 * 1.12);
+  line.setAttribute('y2', y1 * 1.12);
+  line.setAttribute('stroke', '#00eaff');
+  line.setAttribute('stroke-width', '2.5');
+  line.setAttribute('stroke-linecap', 'round');
+  line.setAttribute('opacity', '0.85');
+
+  eqBarsGroup.appendChild(line);
+  eqBars.push({ el: line, r1: r1, rad: rad });
+}
+
+function animateEqBars() {
+  if (isPlayingState) {
+    const time = Date.now() * (bpm / 12000);
+    eqBars.forEach((bar, idx) => {
+      const heightMultiplier = 1 + Math.sin(time + idx * 0.4) * 0.4 + Math.random() * 0.25;
+      const r2 = bar.r1 + (14 * heightMultiplier);
+      const x2 = r2 * Math.cos(bar.rad);
+      const y2 = r2 * Math.sin(bar.rad);
+      bar.el.setAttribute('x2', x2);
+      bar.el.setAttribute('y2', y2);
+    });
+  }
+  requestAnimationFrame(animateEqBars);
+}
+animateEqBars();
+
+function setDiscEffect(effectName) {
+  discWrap.classList.remove('effect-gold', 'effect-fire', 'effect-cyber', 'effect-glitch');
+  discWrap.classList.add(`effect-${effectName}`);
+
+  document.querySelectorAll('.effect-chip').forEach(chip => {
+    chip.classList.remove('active');
+  });
+
+  const activeChip = Array.from(document.querySelectorAll('.effect-chip'))
+    .find(c => c.textContent.toLowerCase().includes(effectName));
+  if (activeChip) activeChip.classList.add('active');
+
+  const eqColors = {
+    gold: '#ffd700',
+    fire: '#ff5500',
+    cyber: '#00ffcc',
+    glitch: '#ff007f'
+  };
+  const color = eqColors[effectName] || '#00eaff';
+  eqBars.forEach(b => b.el.setAttribute('stroke', color));
+}
+
+let discSizePx = 140; 
+const discSizes = [120, 140, 170, 200]; 
+let discSizeIndex = 1;
 
 function alterarTamanhoDisco() {
   discSizeIndex = (discSizeIndex + 1) % discSizes.length;
@@ -330,9 +513,6 @@ function alterarTamanhoDisco() {
   playerEl.style.setProperty('--disc-size', `${discSizePx}px`);
 }
 
-/* ======================================================
-   CONTROLE DE BPM E BATIDA AUTOMÁTICA
-   ====================================================== */
 let bpm = 120;
 const passoBpm = 5;
 const bpmMinimo = 40;
@@ -350,23 +530,21 @@ function alterarBpm(valor) {
 }
 alterarBpm(0);
 
-/* ======================================================
-   ATALHOS E CONTROLES DE TECLADO
-   ====================================================== */
 document.addEventListener('keydown', e => {
   if (document.activeElement.tagName === 'INPUT') return;
   const key = e.key.toLowerCase();
   
   if (key === 'l') alterarBpm(passoBpm);
   if (key === 'k') alterarBpm(-passoBpm);
-  if (key === 'a') alterarTamanhoDisco(); // Pressione 'A' para aumentar/alternar o tamanho do disco!
+  if (key === 'a') alterarTamanhoDisco(); 
   if (key === 's') document.getElementById('topActions').classList.toggle('active');
+  if (key === '1') setDiscEffect('gold');
+  if (key === '2') setDiscEffect('fire');
+  if (key === '3') setDiscEffect('cyber');
+  if (key === '4') setDiscEffect('glitch');
   if (e.key === 'F11') { e.preventDefault(); document.documentElement.requestFullscreen?.(); }
 });
 
-/* ======================================================
-   EXTRAÇÃO DE CORES DA CAPA
-   ====================================================== */
 function updateColorsFromImage(imgUrl) {
   try {
     const img = new Image();
@@ -396,9 +574,6 @@ function updateColorsFromImage(imgUrl) {
   } catch (e) { console.warn('Erro ao extrair cores:', e); }
 }
 
-/* ======================================================
-   BUSCA DE LETRAS NA WEB (API LRC)
-   ====================================================== */
 async function fetchLyrics(trackNameStr, artistNameStr, durationMs) {
   try {
     lyricsContent.innerHTML = '<span class="lyrics-line">Buscando letra... 🎶</span>';
@@ -476,37 +651,8 @@ function updateLyricsDisplay(progressMs) {
   `;
 }
 
-/* ======================================================
-   EFEITOS DAS LIVES (ROSAS, RAIOS, DINHEIRO, FOGO, AVIÕES)
-   ====================================================== */
 function triggerEffect(type) {
   const container = document.getElementById('particleContainer');
-
-  if (type === 'plane') {
-    const planeIcons = ['✈️', '🛩️', '🛫', '🛬', '🚀'];
-    const animations = ['flyCurveLeftToRight', 'flyCurveRightToLeft', 'flySloop'];
-    const count = 12;
-
-    for (let i = 0; i < count; i++) {
-      setTimeout(() => {
-        const el = document.createElement('div');
-        el.classList.add('plane-particle');
-        el.textContent = planeIcons[Math.floor(Math.random() * planeIcons.length)];
-        
-        const selectedAnim = animations[Math.floor(Math.random() * animations.length)];
-        const durationSec = (Math.random() * 1.8 + 2.5).toFixed(2);
-        const fontSizePx = Math.floor(Math.random() * 16 + 28);
-        
-        el.style.fontSize = `${fontSizePx}px`;
-        el.style.animation = `${selectedAnim} ${durationSec}s ease-in-out forwards`;
-        
-        container.appendChild(el);
-        setTimeout(() => el.remove(), durationSec * 1000);
-      }, i * 220);
-    }
-    return;
-  }
-
   if (type === 'bolt') {
     const flash = document.getElementById('lightningFlash');
     flash.classList.remove('lightning-active');
@@ -517,8 +663,8 @@ function triggerEffect(type) {
   const items = { 
     rose: ['🌹', '🌸', '🌺', '🥀'], 
     bolt: ['⚡', '🌩️', '✨'], 
-    money: ['💰', '💵', '💸'],
-    fire: ['🔥', '💥', '✨'] 
+    money: ['💰', '💵', '💸', '💎'],
+    fire: ['🔥', '💥', '✨', '👑'] 
   };
   const selectedList = items[type] || ['✨'];
   const count = type === 'bolt' ? 18 : 24;
@@ -542,9 +688,6 @@ function triggerEffect(type) {
   }
 }
 
-/* ======================================================
-   GERENCIAMENTO DE INTERFACE E SPOTIFY
-   ====================================================== */
 let isDynamicBgEnabled = localStorage.getItem('dynamic_bg_enabled') !== 'false';
 
 function applyDynamicBgState() {
@@ -584,10 +727,16 @@ cancelConfig.onclick = () => editPanel.classList.remove('show');
 
 saveClientIdBtn.onclick = () => {
   const clientId = clientIdInput.value.trim();
-  if (!clientId) { alert('Insira o seu Client ID.'); return; }
+  if (!clientId) {
+    const msg = document.createElement('div');
+    msg.textContent = 'Insira o seu Client ID.';
+    msg.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#ff315d;color:#fff;padding:8px 16px;border-radius:20px;z-index:99;font-size:12px;font-weight:700;';
+    document.body.appendChild(msg);
+    setTimeout(() => msg.remove(), 2500);
+    return;
+  }
   localStorage.setItem('spotify_client_id', clientId);
   editPanel.classList.remove('show');
-  alert('Client ID salvo com sucesso!');
 };
 
 function logoutSpotify() {
@@ -628,7 +777,7 @@ async function generateCodeChallenge(codeVerifier) {
 
 connectNavBtn.onclick = async () => {
   let clientId = localStorage.getItem('spotify_client_id');
-  if (!clientId) { openConfigBtn.click(); alert('Configure o seu Client ID primeiro.'); return; }
+  if (!clientId) { openConfigBtn.click(); return; }
 
   const verifier = generateRandomString(128);
   const challenge = await generateCodeChallenge(verifier);
@@ -654,6 +803,8 @@ function setPlaybackState(isPlaying) {
   const state = isPlaying ? 'running' : 'paused';
   discWrap.style.animationPlayState = state;
   discAnim.style.animationPlayState = state;
+  const eqSvg = document.getElementById('eqSvg');
+  if (eqSvg) eqSvg.style.animationPlayState = state;
 }
 
 async function handleSpotifyCallback() {

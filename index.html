@@ -118,7 +118,7 @@ transition:all .3s ease;display:flex;align-items:center;justify-content:center;g
 .main-effects-btn:hover{transform:scale(1.02);box-shadow:0 0 16px rgba(0,234,255,0.4)}
 
 .effects-menu{
-display:none;grid-template-columns:repeat(4, 1fr);gap:6px;padding:8px;border-radius:12px;
+display:none;grid-template-columns:repeat(5, 1fr);gap:6px;padding:8px;border-radius:12px;
 background:rgba(10,12,24,0.9);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.15);
 animation:slideUp 0.3s ease;
 }
@@ -131,14 +131,47 @@ animation:slideUp 0.3s ease;
 .anim-btn.bolt{border-color:#00eaff55;color:#00eaff}
 .anim-btn.money{border-color:#1ed76055;color:#1ed760}
 .anim-btn.fire{border-color:#ff770055;color:#ffaa00}
+.anim-btn.plane{border-color:#00bcff55;color:#80dfff}
 
-/* Partículas e Flashes */
+/* Partículas, Aviões e Flashes */
 .particle-container{position:absolute;inset:0;pointer-events:none;z-index:10;overflow:hidden}
 .particle{position:absolute;top:-50px;font-size:22px;user-select:none;animation:fall linear forwards}
 @keyframes fall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(360deg);opacity:0}}
 .lightning-flash{position:absolute;inset:0;background:#ffffff;opacity:0;pointer-events:none;z-index:9}
 .lightning-active{animation:flashAnim 0.4s ease-out}
 @keyframes flashAnim{0%{opacity:0.8}20%{opacity:0.1}40%{opacity:0.6}100%{opacity:0}}
+
+/* Animações de Curva para Aviões */
+.plane-particle{
+position:absolute;user-select:none;pointer-events:none;z-index:12;
+filter:drop-shadow(0 0 10px rgba(0,234,255,0.6));
+will-change: transform, opacity;
+}
+
+@keyframes flyCurveLeftToRight {
+  0% { transform: translate(-20vw, 85vh) rotate(-35deg) scale(0.6); opacity: 0; }
+  15% { opacity: 1; }
+  50% { transform: translate(40vw, 35vh) rotate(15deg) scale(1.2); }
+  85% { opacity: 1; }
+  100% { transform: translate(110vw, -10vh) rotate(-40deg) scale(0.7); opacity: 0; }
+}
+
+@keyframes flyCurveRightToLeft {
+  0% { transform: translate(110vw, 80vh) rotate(-145deg) scale(0.6); opacity: 0; }
+  15% { opacity: 1; }
+  50% { transform: translate(50vw, 30vh) rotate(-190deg) scale(1.3); }
+  85% { opacity: 1; }
+  100% { transform: translate(-20vw, -10vh) rotate(-135deg) scale(0.7); opacity: 0; }
+}
+
+@keyframes flySloop {
+  0% { transform: translate(-20vw, 50vh) rotate(-10deg) scale(0.5); opacity: 0; }
+  20% { opacity: 1; }
+  40% { transform: translate(30vw, 20vh) rotate(-60deg) scale(1.1); }
+  60% { transform: translate(60vw, 40vh) rotate(45deg) scale(1.3); }
+  80% { opacity: 1; }
+  100% { transform: translate(110vw, 10vh) rotate(-20deg) scale(0.8); opacity: 0; }
+}
 
 /* Modal Config Client ID */
 .modal-overlay{position:absolute;inset:0;z-index:20;display:none;align-items:center;justify-content:center;background:#02030acc;backdrop-filter:blur(12px)}
@@ -220,6 +253,7 @@ transform:scale(1.1);pointer-events:none;
     <button class="anim-btn bolt" onclick="triggerEffect('bolt')">⚡ <span>Raios</span></button>
     <button class="anim-btn money" onclick="triggerEffect('money')">💰 <span>Grana</span></button>
     <button class="anim-btn fire" onclick="triggerEffect('fire')">🔥 <span>Fogo</span></button>
+    <button class="anim-btn plane" onclick="triggerEffect('plane')">✈️ <span>Aviões</span></button>
   </div>
 </div>
 </div>
@@ -443,10 +477,36 @@ function updateLyricsDisplay(progressMs) {
 }
 
 /* ======================================================
-   EFEITOS DAS LIVES (ROSAS, RAIOS, DINHEIRO, FOGO)
+   EFEITOS DAS LIVES (ROSAS, RAIOS, DINHEIRO, FOGO, AVIÕES)
    ====================================================== */
 function triggerEffect(type) {
   const container = document.getElementById('particleContainer');
+
+  if (type === 'plane') {
+    const planeIcons = ['✈️', '🛩️', '🛫', '🛬', '🚀'];
+    const animations = ['flyCurveLeftToRight', 'flyCurveRightToLeft', 'flySloop'];
+    const count = 12;
+
+    for (let i = 0; i < count; i++) {
+      setTimeout(() => {
+        const el = document.createElement('div');
+        el.classList.add('plane-particle');
+        el.textContent = planeIcons[Math.floor(Math.random() * planeIcons.length)];
+        
+        const selectedAnim = animations[Math.floor(Math.random() * animations.length)];
+        const durationSec = (Math.random() * 1.8 + 2.5).toFixed(2);
+        const fontSizePx = Math.floor(Math.random() * 16 + 28);
+        
+        el.style.fontSize = `${fontSizePx}px`;
+        el.style.animation = `${selectedAnim} ${durationSec}s ease-in-out forwards`;
+        
+        container.appendChild(el);
+        setTimeout(() => el.remove(), durationSec * 1000);
+      }, i * 220);
+    }
+    return;
+  }
+
   if (type === 'bolt') {
     const flash = document.getElementById('lightningFlash');
     flash.classList.remove('lightning-active');

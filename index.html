@@ -24,7 +24,7 @@ radial-gradient(circle at 50% 20%,rgba(44,90,255,.35),transparent 40%),
 radial-gradient(circle at 20% 60%,rgba(255,0,153,.25),transparent 35%),
 radial-gradient(circle at 80% 75%,rgba(0,224,255,.22),transparent 35%),
 linear-gradient(180deg,#05060e 0%,#090a18 50%,#020206 100%);
-display:flex;flex-direction:column;justify-style:space-between;
+display:flex;flex-direction:column;justify-content:space-between;
 padding: 16px 16px 12px;
 will-change: transform;
 box-shadow: 0 0 50px rgba(0,0,0,0.8);
@@ -54,7 +54,7 @@ display:inline-flex;align-items:center;gap:4px;
 .badge-btn.connect-btn{border-color:#1ed76088;background:#061a0cdd;color:#1ed760}
 .badge-btn.disconnect-btn{border-color:#ff315d88;background:#2a060cdd;color:#ff315d;display:none}
 
-.center{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:auto 0;gap:10px}
+.center{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:auto 0;gap:14px}
 
 .disc-compact-wrap{
 position:relative;
@@ -209,27 +209,6 @@ transform: scale(1.04);
 filter: saturate(1.8) contrast(1.2);
 }
 
-.disc-effects-selector {
-display:flex;gap:4px;background:rgba(0,0,0,0.65);backdrop-filter:blur(12px);
-padding:4px 8px;border-radius:20px;border:1px solid rgba(255,255,255,0.15);
-margin-top: 2px;z-index: 5;
-transition: opacity 0.3s ease, visibility 0.3s ease;
-}
-.disc-effects-selector.hidden-themes {
-display: none !important;
-}
-
-.effect-chip {
-font-size:9px;font-weight:800;padding:4px 9px;border-radius:12px;
-background:rgba(255,255,255,0.08);color:#aab4d0;border:1px solid transparent;
-cursor:pointer;transition:all 0.2s ease;
-}
-.effect-chip.active, .effect-chip:hover {
-background:linear-gradient(135deg, #00eaff, #ff007f);
-color:#fff;border-color:rgba(255,255,255,0.5);
-box-shadow:0 0 12px rgba(0,234,255,0.6);
-}
-
 .lyrics-box{
 width:100%;max-height:120px;min-height:85px;
 background:rgba(10, 14, 28, 0.78);backdrop-filter:blur(16px);
@@ -252,21 +231,41 @@ box-shadow: 0 8px 24px rgba(0,0,0,0.5);
 
 .bottom{position:relative;z-index:3;width:100%;display:flex;flex-direction:column;gap:6px}
 .main-effects-btn{
-width:100%;padding:8px;border-radius:10px;border:1px solid rgba(255,255,255,0.25);
-background:linear-gradient(135deg,rgba(255,0,128,0.2),rgba(0,234,255,0.2));
-color:#fff;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;
+width:100%;padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,0.25);
+background:linear-gradient(135deg,rgba(255,0,128,0.25),rgba(0,234,255,0.25));
+color:#fff;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;
 cursor:pointer;backdrop-filter:blur(16px);box-shadow:0 4px 16px rgba(0,0,0,0.4);
 transition:all .3s ease;display:flex;align-items:center;justify-content:center;gap:6px;
 }
 .main-effects-btn:hover{transform:scale(1.02);box-shadow:0 0 16px rgba(0,234,255,0.4)}
 
 .effects-menu{
-display:none;grid-template-columns:repeat(4, 1fr);gap:6px;padding:8px;border-radius:12px;
-background:rgba(10,12,24,0.92);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.15);
+display:none;flex-direction:column;gap:8px;padding:10px;border-radius:14px;
+background:rgba(10,12,24,0.95);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.18);
 animation:slideUp 0.3s ease;
 }
-.effects-menu.show{display:grid}
+.effects-menu.show{display:flex}
 @keyframes slideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+.effects-section-title{
+font-size:8px;font-weight:800;letter-spacing:1.5px;color:#00eaff;
+text-transform:uppercase;margin:2px 0 0 2px;
+}
+
+.effects-grid{
+display:grid;grid-template-columns:repeat(4, 1fr);gap:5px;
+}
+
+.effect-chip {
+font-size:9px;font-weight:800;padding:6px 4px;border-radius:8px;
+background:rgba(255,255,255,0.08);color:#aab4d0;border:1px solid rgba(255,255,255,0.12);
+cursor:pointer;transition:all 0.2s ease;text-align:center;
+}
+.effect-chip.active, .effect-chip:hover {
+background:linear-gradient(135deg, #00eaff, #ff007f);
+color:#fff;border-color:rgba(255,255,255,0.5);
+box-shadow:0 0 12px rgba(0,234,255,0.6);
+}
 
 .anim-btn{padding:6px 4px;border-radius:8px;border:1px solid #ffffff20;background:rgba(255,255,255,0.06);color:#fff;font-size:9px;font-weight:700;cursor:pointer;transition:all .2s ease;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
 .anim-btn:hover{transform:translateY(-2px);background:rgba(255,255,255,0.18)}
@@ -324,7 +323,6 @@ transform:scale(1.1);pointer-events:none;
   </div>
   <div class="top-actions" id="topActions">
     <button class="badge-btn" id="bgToggleBtn">✨ FUNDO: ON</button>
-    <button class="badge-btn" id="toggleThemesBtn" onclick="toggleThemeSelector()">👁️ TEMAS: VISÍVEL</button>
     <button class="badge-btn connect-btn" id="connectNavBtn">🎧 SPOTIFY</button>
     <button class="badge-btn disconnect-btn" id="disconnectNavBtn">❌ SAIR</button>
     <button class="badge-btn" id="openConfigBtn">⚙ ID</button>
@@ -347,14 +345,6 @@ transform:scale(1.1);pointer-events:none;
     <div class="album-art" id="albumArt"></div>
   </div>
 
-  <!-- Botões de Seleção de Efeitos do Vinil Hip-Hop / Rap -->
-  <div class="disc-effects-selector" id="themeSelectorContainer">
-    <button class="effect-chip active" onclick="setDiscEffect('gold')">👑 OURO RAP</button>
-    <button class="effect-chip" onclick="setDiscEffect('fire')">🔥 TRAP HEAT</button>
-    <button class="effect-chip" onclick="setDiscEffect('cyber')">⚡ CYBER</button>
-    <button class="effect-chip" onclick="setDiscEffect('glitch')">👾 DRILL GLITCH</button>
-  </div>
-
   <!-- Caixa de Letras Sync da Música -->
   <div class="lyrics-box" id="lyricsBox">
     <div class="lyrics-title-tag">🎤 Letra ao Vivo</div>
@@ -374,10 +364,21 @@ transform:scale(1.1);pointer-events:none;
   <button class="main-effects-btn" id="toggleEffectsBtn">✨ Menu de Efeitos Especiais</button>
   
   <div class="effects-menu" id="effectsMenu">
-    <button class="anim-btn rose" onclick="triggerEffect('rose')">🌹 <span>Rosas</span></button>
-    <button class="anim-btn bolt" onclick="triggerEffect('bolt')">⚡ <span>Raios</span></button>
-    <button class="anim-btn money" onclick="triggerEffect('money')">💰 <span>Grana</span></button>
-    <button class="anim-btn fire" onclick="triggerEffect('fire')">🔥 <span>Fogo</span></button>
+    <div class="effects-section-title">🎨 Estilo do Vinil</div>
+    <div class="effects-grid">
+      <button class="effect-chip active" onclick="setDiscEffect('gold')">👑 OURO</button>
+      <button class="effect-chip" onclick="setDiscEffect('fire')">🔥 TRAP</button>
+      <button class="effect-chip" onclick="setDiscEffect('cyber')">⚡ CYBER</button>
+      <button class="effect-chip" onclick="setDiscEffect('glitch')">👾 DRILL</button>
+    </div>
+
+    <div class="effects-section-title">🎆 Partículas & Animações</div>
+    <div class="effects-grid">
+      <button class="anim-btn rose" onclick="triggerEffect('rose')">🌹 <span>Rosas</span></button>
+      <button class="anim-btn bolt" onclick="triggerEffect('bolt')">⚡ <span>Raios</span></button>
+      <button class="anim-btn money" onclick="triggerEffect('money')">💰 <span>Grana</span></button>
+      <button class="anim-btn fire" onclick="triggerEffect('fire')">🔥 <span>Fogo</span></button>
+    </div>
   </div>
 </div>
 </div>
@@ -482,18 +483,6 @@ function animateEqBars() {
 }
 animateEqBars();
 
-function toggleThemeSelector() {
-  const container = document.getElementById('themeSelectorContainer');
-  const btn = document.getElementById('toggleThemesBtn');
-  container.classList.toggle('hidden-themes');
-  
-  if (container.classList.contains('hidden-themes')) {
-    btn.innerHTML = '👁️ TEMAS: OCULTO';
-  } else {
-    btn.innerHTML = '👁️ TEMAS: VISÍVEL';
-  }
-}
-
 function setDiscEffect(effectName) {
   discWrap.classList.remove('effect-gold', 'effect-fire', 'effect-cyber', 'effect-glitch');
   discWrap.classList.add(`effect-${effectName}`);
@@ -503,7 +492,7 @@ function setDiscEffect(effectName) {
   });
 
   const activeChip = Array.from(document.querySelectorAll('.effect-chip'))
-    .find(c => c.textContent.toLowerCase().includes(effectName));
+    .find(c => c.textContent.toLowerCase().includes(effectName) || (effectName === 'gold' && c.textContent.includes('OURO')) || (effectName === 'fire' && c.textContent.includes('TRAP')) || (effectName === 'glitch' && c.textContent.includes('DRILL')));
   if (activeChip) activeChip.classList.add('active');
 
   const eqColors = {
@@ -547,7 +536,6 @@ document.addEventListener('keydown', e => {
   if (document.activeElement.tagName === 'INPUT') return;
   const key = e.key.toLowerCase();
   
-  if (key === 't') toggleThemeSelector();
   if (key === 'l') alterarBpm(passoBpm);
   if (key === 'k') alterarBpm(-passoBpm);
   if (key === 'a') alterarTamanhoDisco(); 

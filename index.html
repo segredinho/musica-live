@@ -10,7 +10,7 @@ html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;font-family:
 body{display:flex;align-items:center;justify-content:center}
 
 :root {
-  --disc-size: 140px;
+  --disc-size: 160px;
   --c1: #00eaff;
   --c2: #7c4dff;
   --c3: #ff24c4;
@@ -57,8 +57,8 @@ display:inline-flex;align-items:center;gap:4px;
 
 .disc-compact-wrap{
 position:relative;
-width: var(--disc-size, 140px);
-height: var(--disc-size, 140px);
+width: var(--disc-size, 160px);
+height: var(--disc-size, 160px);
 transition: width 0.3s ease, height 0.3s ease;
 will-change: transform;
 animation: autoBeatPulse 0.5s ease-in-out infinite alternate;
@@ -184,7 +184,7 @@ background: #00eaff; box-shadow: 0 0 10px #00eaff; animation: hudScan 1.5s ease-
 @keyframes hudScan { 0% { top: 0%; } 100% { top: 95%; } }
 
 .disc{
-position:absolute;inset:8px;border-radius:50%;
+position:absolute;inset:4px;border-radius:50%;
 background:repeating-radial-gradient(circle,#090a10 0 4px,#161923 5px 7px);
 border:2px solid #ffffff18;box-shadow:0 0 24px #294dff66, inset 0 0 16px #000;
 animation:record 4s linear infinite;
@@ -192,20 +192,20 @@ animation-play-state: paused;
 z-index:2;
 }
 @keyframes record{to{transform:rotate(360deg)}}
-.disc:before{content:"";position:absolute;inset:38%;border-radius:50%;background:linear-gradient(135deg,var(--c1, #00eaff),var(--c2, #6b5cff) 55%,var(--c3, #ff2ac3));box-shadow:0 0 16px #00eaff88;z-index:2}
 
+/* Capa do Álbum / Foto do Artista Otimizada e Ampliada */
 .album-art{
-position:absolute;inset:28px;border-radius:50%;
+position:absolute;inset:14px;border-radius:50%;
 background-size:cover;background-position:center;
-opacity:.88;filter:saturate(1.3) contrast(1.1);
-mix-blend-mode:normal;z-index:3;
-border: 2px solid rgba(255,255,255,0.4);
-box-shadow: inset 0 0 12px rgba(0,0,0,0.8), 0 0 18px rgba(255,255,255,0.2);
+opacity:1;filter:saturate(1.2) contrast(1.05);
+mix-blend-mode:normal;z-index:4;
+border: 3px solid rgba(255,255,255,0.7);
+box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 0 22px rgba(0,234,255,0.4);
 transition: all 0.4s ease;
 }
 .album-art:hover {
 transform: scale(1.04);
-filter: saturate(1.8) contrast(1.2);
+filter: saturate(1.5) contrast(1.1);
 }
 
 .lyrics-box{
@@ -296,7 +296,6 @@ filter:blur(60px) brightness(0.4);opacity:0;z-index:0;transition:opacity 1s ease
 transform:scale(1.1);pointer-events:none;
 }
 
-/* MODO EDIÇÃO OCULTO (TECLA G) */
 .edit-mode-active .draggable-element {
   outline: 2px dashed #00eaff !important;
   outline-offset: 4px;
@@ -355,7 +354,6 @@ transform:scale(1.1);pointer-events:none;
 <div class="particle-container" id="particleContainer"></div>
 <div class="grid"></div>
 
-<!-- Barra do Modo de Edição Livre -->
 <div class="edit-toolbar" id="editToolbar">
   <span>🛠️ MODO DE EDIÇÃO ATIVO</span>
   <span id="selectedElemText" style="color:#00eaff;">(Clique em um item)</span>
@@ -365,7 +363,7 @@ transform:scale(1.1);pointer-events:none;
   <button onclick="toggleEditMode()" style="background:#ff315d;">✖ Sair (G)</button>
 </div>
 
-<div class="top draggable-element" id="elem-top" data-id="top">
+<div class="top draggable-element" id="elem-top" data-id="top" onclick="selectElement(this)">
   <div class="top-info">
     <div class="live"><i class="dot"></i> LIVE MUSIC</div>
     <div class="bpm-badge" id="bpmBadge">⚡ 120 BPM</div>
@@ -378,7 +376,7 @@ transform:scale(1.1);pointer-events:none;
 </div>
 
 <div class="center">
-  <div class="disc-compact-wrap effect-gold draggable-element" id="elem-disc" data-id="disc">
+  <div class="disc-compact-wrap effect-gold draggable-element" id="elem-disc" data-id="disc" onclick="selectElement(this)">
     <svg class="equalizer-svg" viewBox="0 0 200 200" id="eqSvg">
       <g transform="translate(100,100)" id="eqBarsGroup"></g>
     </svg>
@@ -392,12 +390,12 @@ transform:scale(1.1);pointer-events:none;
     <div class="album-art" id="albumArt"></div>
   </div>
 
-  <div class="lyrics-box draggable-element" id="elem-lyrics" data-id="lyrics">
+  <div class="lyrics-box draggable-element" id="elem-lyrics" data-id="lyrics" onclick="selectElement(this)">
     <div class="lyrics-title-tag">🎤 Letra ao Vivo</div>
     <div class="lyrics-content" id="lyricsContent">Conecte sua conta do Spotify para sincronizar.</div>
   </div>
 
-  <div class="track draggable-element" id="elem-track" data-id="track">
+  <div class="track draggable-element" id="elem-track" data-id="track" onclick="selectElement(this)">
     <div class="trackname" id="trackName">Nenhuma música tocando</div>
     <div class="artist" id="artist">Aguardando login no Spotify...</div>
 
@@ -406,7 +404,7 @@ transform:scale(1.1);pointer-events:none;
   </div>
 </div>
 
-<div class="bottom draggable-element" id="elem-bottom" data-id="bottom">
+<div class="bottom draggable-element" id="elem-bottom" data-id="bottom" onclick="selectElement(this)">
   <button class="main-effects-btn" id="toggleEffectsBtn">✨ Menu de Efeitos Especiais</button>
   
   <div class="effects-menu" id="effectsMenu">
@@ -429,7 +427,6 @@ transform:scale(1.1);pointer-events:none;
 </div>
 </div>
 
-<!-- Modal Config Client ID -->
 <div class="modal-overlay" id="editPanel">
   <div class="edit-box">
     <div class="edit-title">⚙ Configurar Client ID</div>
@@ -781,37 +778,50 @@ function setDiscEffect(effectName) {
   eqBars.forEach(b => b.el.setAttribute('stroke', color));
 }
 
-let discSizePx = 140; 
-const discSizes = [120, 140, 170, 200]; 
-let discSizeIndex = 1;
-
-function alterarTamanhoDisco() {
-  discSizeIndex = (discSizeIndex + 1) % discSizes.length;
-  discSizePx = discSizes[discSizeIndex];
-  playerEl.style.setProperty('--disc-size', `${discSizePx}px`);
-}
-
 let bpm = 120;
-const passoBpm = 5;
-const bpmMinimo = 40;
-const bpmMaximo = 300;
-
 function alterarBpm(valor) {
-  bpm = Math.min(bpmMaximo, Math.max(bpmMinimo, bpm + valor));
+  bpm = Math.min(300, Math.max(40, bpm + valor));
   bpmBadge.textContent = `⚡ ${bpm} BPM`;
-  
   const duracaoBatida = (60 / bpm); 
   const duracaoRotacao = duracaoBatida * 8;
-  
   discWrap.style.animationDuration = `${duracaoBatida / 2}s`;
   discAnim.style.animationDuration = `${duracaoRotacao}s`;
 }
 alterarBpm(0);
 
-/* SISTEMA DE MODO DE EDIÇÃO OCULTO (TECLA G) */
+// Funções de Efeitos Especiais (Partículas)
+function triggerEffect(type) {
+  const container = document.getElementById('particleContainer');
+  const symbols = { rose: ['🌹', '❤️', '✨'], bolt: ['⚡', '💥', '🔥'], money: ['💵', '💰', '💎'], fire: ['🔥', '🌋', '✨'] };
+  const items = symbols[type] || ['✨'];
+
+  for (let i = 0; i < 15; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.textContent = items[Math.floor(Math.random() * items.length)];
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.animationDuration = (Math.random() * 2 + 2) + 's';
+    p.style.fontSize = (Math.random() * 16 + 16) + 'px';
+    container.appendChild(p);
+    setTimeout(() => p.remove(), 4000);
+  }
+
+  if (type === 'bolt') {
+    const flash = document.getElementById('lightningFlash');
+    flash.classList.add('lightning-active');
+    setTimeout(() => flash.classList.remove('lightning-active'), 400);
+  }
+}
+
+// Atalho de Teclado (Tecla G para ativar modo de edição)
+window.addEventListener('keydown', (e) => {
+  if (e.key.toLowerCase() === 'g') {
+    toggleEditMode();
+  }
+});
+
 let isEditMode = false;
 let selectedElement = null;
-let layoutData = JSON.parse(localStorage.getItem('app_layout_data') || '{}');
 
 function toggleEditMode() {
   isEditMode = !isEditMode;
@@ -836,127 +846,31 @@ function scaleSelectedElement(delta) {
     alert('Selecione um elemento primeiro clicando nele!');
     return;
   }
-  const id = selectedElement.getAttribute('data-id');
-  layoutData[id] = layoutData[id] || { x: 0, y: 0, scale: 1 };
-  layoutData[id].scale = Math.max(0.5, Math.min(2.0, (layoutData[id].scale || 1) + delta));
-  applyTransform(selectedElement, layoutData[id]);
-  saveLayout();
-}
-
-function applyTransform(el, data) {
-  if (!data) return;
-  const x = data.x || 0;
-  const y = data.y || 0;
-  const scale = data.scale || 1;
-  el.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
-}
-
-function saveLayout() {
-  localStorage.setItem('app_layout_data', JSON.stringify(layoutData));
+  let currentScale = parseFloat(selectedElement.getAttribute('data-scale') || '1');
+  currentScale = Math.max(0.6, Math.min(1.8, currentScale + delta));
+  selectedElement.setAttribute('data-scale', currentScale);
+  selectedElement.style.transform = `scale(${currentScale})`;
 }
 
 function resetLayout() {
-  layoutData = {};
-  localStorage.removeItem('app_layout_data');
   document.querySelectorAll('.draggable-element').forEach(el => {
-    el.style.transform = '';
+    el.removeAttribute('data-scale');
+    el.style.transform = 'none';
   });
-  alert('Layout resetado para as posições originais!');
-}
-
-function initDraggableElements() {
-  document.querySelectorAll('.draggable-element').forEach(el => {
-    const id = el.getAttribute('data-id');
-    if (layoutData[id]) {
-      applyTransform(el, layoutData[id]);
-    }
-
-    let isDragging = false;
-    let startX, startY;
-
-    el.addEventListener('pointerdown', e => {
-      if (!isEditMode) return;
-      selectElement(el);
-      isDragging = true;
-      startX = e.clientX - (layoutData[id]?.x || 0);
-      startY = e.clientY - (layoutData[id]?.y || 0);
-      el.setPointerCapture(e.pointerId);
-      e.stopPropagation();
-    });
-
-    el.addEventListener('pointermove', e => {
-      if (!isDragging || !isEditMode) return;
-      layoutData[id] = layoutData[id] || { x: 0, y: 0, scale: 1 };
-      layoutData[id].x = e.clientX - startX;
-      layoutData[id].y = e.clientY - startY;
-      applyTransform(el, layoutData[id]);
-    });
-
-    el.addEventListener('pointerup', e => {
-      if (!isDragging) return;
-      isDragging = false;
-      saveLayout();
-    });
-  });
-}
-
-document.addEventListener('keydown', e => {
-  if (document.activeElement.tagName === 'INPUT') return;
-  const key = e.key.toLowerCase();
-  
-  if (key === 'g') toggleEditMode();
-  if (key === 'l') alterarBpm(passoBpm);
-  if (key === 'k') alterarBpm(-passoBpm);
-  if (key === 'a') alterarTamanhoDisco(); 
-  if (key === '1') setDiscEffect('gold');
-  if (key === '2') setDiscEffect('fire');
-  if (key === '3') setDiscEffect('cyber');
-  if (key === '4') setDiscEffect('glitch');
-  if (e.key === 'F11') { e.preventDefault(); document.documentElement.requestFullscreen?.(); }
-});
-
-function triggerEffect(type) {
-  const container = document.getElementById('particleContainer');
-  if (type === 'bolt') {
-    const flash = document.getElementById('lightningFlash');
-    flash.classList.remove('lightning-active');
-    void flash.offsetWidth;
-    flash.classList.add('lightning-active');
-  }
-
-  const items = { 
-    rose: ['🌹', '🌸', '🌺', '🥀'], 
-    bolt: ['⚡', '🌩️', '✨'], 
-    money: ['💰', '💵', '💸', '💎'],
-    fire: ['🔥', '💥', '✨', '👑'] 
-  };
-  const selectedList = items[type] || ['✨'];
-  const count = type === 'bolt' ? 18 : 24;
-
-  for (let i = 0; i < count; i++) {
-    setTimeout(() => {
-      const el = document.createElement('div');
-      el.classList.add('particle');
-      el.textContent = selectedList[Math.floor(Math.random() * selectedList.length)];
-      el.style.left = Math.random() * 92 + '%';
-      
-      const durationSec = (Math.random() * 1.8 + 1.2).toFixed(2);
-      const sizePx = Math.floor(Math.random() * 14 + 18);
-      
-      el.style.fontSize = sizePx + 'px';
-      el.style.animationDuration = durationSec + 's';
-      
-      container.appendChild(el);
-      setTimeout(() => el.remove(), durationSec * 1000);
-    }, i * 65);
-  }
+  selectedElement = null;
+  document.getElementById('selectedElemText').textContent = '(Posições resetadas)';
 }
 
 // Inicialização
-handleOAuthCallback();
-initDraggableElements();
-setInterval(fetchCurrentlyPlaying, 2500);
-requestAnimationFrame(updatePlaybackLoop);
+window.onload = async () => {
+  await handleOAuthCallback();
+  updateAuthUI();
+  requestAnimationFrame(updatePlaybackLoop);
+  if (accessToken) {
+    fetchCurrentlyPlaying();
+    setInterval(fetchCurrentlyPlaying, 3000);
+  }
+};
 </script>
 </body>
 </html>

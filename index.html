@@ -10,11 +10,11 @@ html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;font-family:
 body{display:flex;align-items:center;justify-content:center}
 
 .player{
-position:relative;width:100vw;height:100vh;max-width:420px;max-height:860px;
+position:relative;width:100vw;height:100vh;max-width:420px;max-height:920px;
 aspect-ratio: 9/16; overflow:hidden;
 background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 50%, #94a3b8 100%);
 display:flex;flex-direction:column;justify-content:space-between;
-padding: 24px 20px 28px;
+padding: 20px 20px 24px;
 box-shadow: 0 25px 60px rgba(0,0,0,0.4);
 border-radius: 40px;
 }
@@ -29,70 +29,82 @@ pointer-events:none;
 /* Topo (Cabeçalho) */
 .top{position:relative;z-index:3;display:flex;justify-content:space-between;align-items:center;width:100%}
 .icon-btn{
-width:42px;height:42px;border-radius:50%;background:#ffffff;border:none;
+width:38px;height:38px;border-radius:50%;background:#ffffff;border:none;
 display:flex;align-items:center;justify-content:center;cursor:pointer;
-box-shadow: 6px 6px 16px rgba(163,177,198,0.6), -6px -6px 16px rgba(255,255,255,0.8);
-color:#334155;font-size:16px;transition:all 0.2s ease;
+box-shadow: 5px 5px 12px rgba(163,177,198,0.6), -5px -5px 12px rgba(255,255,255,0.8);
+color:#334155;font-size:15px;transition:all 0.2s ease;
 }
-.icon-btn:active{box-shadow: inset 3px 3px 6px rgba(163,177,198,0.6), inset -3px -3px 6px rgba(255,255,255,0.8);transform:scale(0.96);}
-.playlist-title{font-size:14px;font-weight:700;color:#334155;letter-spacing:-0.2px}
+.icon-btn:active{box-shadow: inset 2px 2px 5px rgba(163,177,198,0.6), inset -2px -2px 5px rgba(255,255,255,0.8);transform:scale(0.96);}
+.playlist-title{font-size:13px;font-weight:700;color:#334155;letter-spacing:-0.2px}
 
 /* Centro (Capa/Disco Circular Estilo Neumorphism) */
-.center{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:auto 0;width:100%;gap:22px}
+.center{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:auto 0;width:100%;gap:14px}
 
 .disc-compact-wrap{
 position:relative;
-width: 230px;
-height: 230px;
+width: 180px;
+height: 180px;
 border-radius: 50%;
 background: linear-gradient(135deg, #f1f5f9, #cbd5e1);
-box-shadow: 14px 14px 30px rgba(163,177,198,0.7), -14px -14px 30px rgba(255,255,255,0.9);
+box-shadow: 10px 10px 24px rgba(163,177,198,0.7), -10px -10px 24px rgba(255,255,255,0.9);
 display:flex;align-items:center;justify-content:center;
 will-change: transform;
 }
 
 .album-art{
-position:absolute;inset:12px;border-radius:50%;
+position:absolute;inset:10px;border-radius:50%;
 background-size:cover;background-position:center;
-box-shadow: inset 0 0 20px rgba(0,0,0,0.2), 0 10px 25px rgba(0,0,0,0.15);
+box-shadow: inset 0 0 15px rgba(0,0,0,0.2), 0 8px 20px rgba(0,0,0,0.15);
 transition: all 0.4s ease;
 }
 
 /* Badge "NOW PLAYING" */
 .now-playing-badge{
 background: linear-gradient(135deg, #ff2d88, #ff007f);
-color: #fff;font-size: 10px;font-weight: 800;letter-spacing: 2px;
-padding: 6px 18px;border-radius: 999px;text-transform: uppercase;
-box-shadow: 0 6px 16px rgba(255,0,127,0.4);
+color: #fff;font-size: 9px;font-weight: 800;letter-spacing: 2px;
+padding: 4px 14px;border-radius: 999px;text-transform: uppercase;
+box-shadow: 0 4px 12px rgba(255,0,127,0.4);
 }
 
 /* Informações da Música & Artista */
-.track{position:relative;z-index:3;width:100%;text-align:center;display:flex;flex-direction:column;gap:4px}
-.trackname{font-size:22px;font-weight:900;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-0.5px}
-.artist{font-size:12px;color:#64748b;font-weight:600}
+.track{position:relative;z-index:3;width:100%;text-align:center;display:flex;flex-direction:column;gap:2px}
+.trackname{font-size:18px;font-weight:900;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-0.3px}
+.artist{font-size:11px;color:#64748b;font-weight:600}
+
+/* Caixa de Legenda Sofisticada (Live Lyrics) */
+.lyrics-box{
+width:100%;max-height:55px;min-height:48px;
+background:rgba(255, 255, 255, 0.65);backdrop-filter:blur(12px);
+border:1px solid rgba(255, 255, 255, 0.8);border-radius:12px;
+padding:6px 10px;display:flex;flex-direction:column;align-items:center;
+justify-content:center;text-align:center;overflow:hidden;position:relative;
+box-shadow: inset 2px 2px 6px rgba(163,177,198,0.3), 4px 4px 12px rgba(163,177,198,0.2);
+}
+.lyrics-title-tag{font-size:7px;letter-spacing:1.5px;color:#ff007f;font-weight:800;text-transform:uppercase;margin-bottom:2px}
+.lyrics-content{font-size:11px;font-weight:700;color:#1e293b;line-height:1.3;transition:all 0.3s ease;max-width:100%}
 
 /* Barra de Progresso Neumórfica */
-.progress-container{width:100%;padding:0 8px;margin-top:6px}
-.progress{height:6px;border-radius:20px;background:#cbd5e1;box-shadow: inset 2px 2px 5px rgba(163,177,198,0.8), inset -2px -2px 5px rgba(255,255,255,0.9);overflow:hidden;position:relative;cursor:pointer}
-.fill{width:0%;height:100%;background:linear-gradient(90deg, #ff2d88, #7c4dff);border-radius:20px;transition:width 0.3s ease}
-.times{display:flex;justify-content:space-between;margin-top:6px;color:#64748b;font-size:10px;font-weight:700}
+.progress-container{width:100%;padding:0 4px}
+.progress{height:5px;border-radius:20px;background:#cbd5e1;box-shadow: inset 2px 2px 4px rgba(163,177,198,0.8), inset -2px -2px 4px rgba(255,255,255,0.9);overflow:hidden;position:relative;cursor:pointer}
+.fill{width:0%;height:100%;background:linear-gradient(90deg, #ff2d88, #7c4dff);border-radius:20px;transition:width 0.1s linear}
+.times{display:flex;justify-content:space-between;margin-top:4px;color:#64748b;font-size:9.5px;font-weight:700}
 
 /* Controles Inferiores (Botões Play/Pause Rosa Neumorphism) */
-.bottom{position:relative;z-index:3;width:100%;display:flex;align-items:center;justify-content:space-around;padding-top:10px}
+.bottom{position:relative;z-index:3;width:100%;display:flex;align-items:center;justify-content:space-around;padding-top:4px}
 .control-btn{
-background:none;border:none;cursor:pointer;color:#64748b;font-size:16px;font-weight:700;
+background:none;border:none;cursor:pointer;color:#64748b;font-size:15px;font-weight:700;
 transition:all 0.2s ease;display:flex;align-items:center;justify-content:center;
 }
 .control-btn:hover{color:#0f172a}
 .play-pause-btn{
-width:64px;height:64px;border-radius:50%;
+width:56px;height:56px;border-radius:50%;
 background: linear-gradient(135deg, #ff3388, #e6006f);
-box-shadow: 8px 8px 20px rgba(230,0,111,0.4), -6px -6px 16px rgba(255,255,255,0.8);
-color:#fff;font-size:22px;border:none;cursor:pointer;
+box-shadow: 6px 6px 16px rgba(230,0,111,0.4), -5px -5px 14px rgba(255,255,255,0.8);
+color:#fff;font-size:20px;border:none;cursor:pointer;
 display:flex;align-items:center;justify-content:center;transition:all 0.2s ease;
 }
 .play-pause-btn:active{
-box-shadow: inset 4px 4px 8px rgba(150,0,70,0.4), inset -4px -4px 8px rgba(255,100,160,0.4);
+box-shadow: inset 3px 3px 6px rgba(150,0,70,0.4), inset -3px -3px 6px rgba(255,100,160,0.4);
 transform:scale(0.96);
 }
 
@@ -111,12 +123,12 @@ transform:scale(0.96);
 
 /* Painel Spotify / Extra de Conexão no Topo */
 .spotify-top-bar {
-display:flex; justify-content:space-between; width:100%; margin-bottom: 10px;
+display:flex; justify-content:space-between; width:100%; margin-bottom: 6px;
 }
 .badge-btn {
-padding: 6px 12px; border: none; border-radius: 999px;
-background: #ffffff; box-shadow: 4px 4px 10px rgba(163,177,198,0.5), -4px -4px 10px rgba(255,255,255,0.8);
-font-size: 10px; color: #334155; font-weight: 800; cursor: pointer; transition: all 0.2s ease;
+padding: 5px 10px; border: none; border-radius: 999px;
+background: #ffffff; box-shadow: 3px 3px 8px rgba(163,177,198,0.5), -3px -3px 8px rgba(255,255,255,0.8);
+font-size: 9.5px; color: #334155; font-weight: 800; cursor: pointer; transition: all 0.2s ease;
 }
 .badge-btn.connect-btn { color: #10b981; }
 .badge-btn.disconnect-btn { color: #ef4444; display: none; }
@@ -126,20 +138,17 @@ font-size: 10px; color: #334155; font-weight: 800; cursor: pointer; transition: 
 <div class="player" id="player">
 <div class="bg-ambient-cover" id="bgAmbientCover"></div>
 
-<!-- Barra Superior Estilo Referência -->
 <div class="top">
   <button class="icon-btn" onclick="history.back()">❮</button>
   <div class="playlist-title">Your Playlist</div>
   <button class="icon-btn" id="openConfigBtn">⚙</button>
 </div>
 
-<!-- Ações Spotify e Status -->
 <div class="spotify-top-bar">
   <button class="badge-btn connect-btn" id="connectNavBtn">🎧 CONECTAR SPOTIFY</button>
   <button class="badge-btn disconnect-btn" id="disconnectNavBtn">❌ DESCONECTAR</button>
 </div>
 
-<!-- Centro com Grande Círculo de Capa/Álbum -->
 <div class="center">
   <div class="disc-compact-wrap" id="elem-disc">
     <div class="album-art" id="albumArt" style="background-image: url('https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=500&auto=format&fit=crop&q=60');"></div>
@@ -152,13 +161,18 @@ font-size: 10px; color: #334155; font-weight: 800; cursor: pointer; transition: 
     <div class="artist" id="artist">Jane Doe feat Dolor</div>
   </div>
 
+  <!-- Caixa de Legenda Sofisticada (Letra Sincronizada) -->
+  <div class="lyrics-box" id="lyricsBox">
+    <div class="lyrics-title-tag">✨ Legenda ao Vivo</div>
+    <div class="lyrics-content" id="lyricsContent">Conecte sua conta do Spotify para sincronizar.</div>
+  </div>
+
   <div class="progress-container">
-    <div class="progress"><div class="fill" id="fill"></div></div>
-    <div class="times"><span id="current">00:40</span><span id="duration">02:28</span></div>
+    <div class="progress" id="progressBar"><div class="fill" id="fill"></div></div>
+    <div class="times"><span id="current">00:00</span><span id="duration">00:00</span></div>
   </div>
 </div>
 
-<!-- Controles Inferiores -->
 <div class="bottom">
   <button class="control-btn" title="Shuffle">🔀</button>
   <button class="control-btn" title="Previous">⏮</button>
@@ -204,8 +218,14 @@ const fill = document.getElementById('fill');
 const current = document.getElementById('current');
 const duration = document.getElementById('duration');
 const playPauseBtn = document.getElementById('playPauseBtn');
+const lyricsContent = document.getElementById('lyricsContent');
 
+let currentTrackId = null;
+let currentLyricsLines = [];
+let localProgressMs = 0;
+let totalDurationMs = 1;
 let isPlayingState = false;
+let lastSyncTimestamp = Date.now();
 
 openConfigBtn.onclick = () => {
   clientIdInput.value = clientId;
@@ -314,11 +334,24 @@ async function fetchCurrentlyPlaying() {
     const res = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
       headers: { 'Authorization': `Bearer ${accessToken}` }
     });
-    if (res.status === 204 || res.status === 401) return;
+    if (res.status === 204 || res.status === 401) {
+      if (res.status === 401) {
+        localStorage.removeItem('spotify_access_token');
+        accessToken = '';
+        updateAuthUI();
+      }
+      return;
+    }
     const data = await res.json();
     if (!data || !data.item) return;
 
     const item = data.item;
+    isPlayingState = data.is_playing;
+    localProgressMs = data.progress_ms || 0;
+    totalDurationMs = item.duration_ms || 1;
+    lastSyncTimestamp = Date.now();
+
+    playPauseBtn.textContent = isPlayingState ? '⏸' : '▶';
     trackName.textContent = item.name;
     artist.textContent = item.artists.map(a => a.name).join(', ');
 
@@ -327,17 +360,96 @@ async function fetchCurrentlyPlaying() {
       albumArt.style.backgroundImage = `url('${imgUrl}')`;
       bgAmbientCover.style.backgroundImage = `url('${imgUrl}')`;
     }
+
+    if (currentTrackId !== item.id) {
+      currentTrackId = item.id;
+      fetchLyricsLRCLIB(item.name, item.artists[0].name, item.duration_ms / 1000);
+    }
   } catch (err) {
     console.error(err);
   }
 }
 
+async function fetchLyricsLRCLIB(track, artistName, durationSec) {
+  lyricsContent.textContent = 'Buscando legenda sincronizada...';
+  currentLyricsLines = [];
+
+  try {
+    const query = new URLSearchParams({
+      track_name: track,
+      artist_name: artistName,
+      duration: Math.round(durationSec)
+    });
+    const res = await fetch(`https://lrclib.net/api/get?${query.toString()}`);
+    if (res.ok) {
+      const data = await res.json();
+      if (data.syncedLyrics) {
+        parseSyncedLyrics(data.syncedLyrics);
+        return;
+      }
+    }
+    lyricsContent.textContent = 'Legenda instrumental / Não encontrada.';
+  } catch (e) {
+    lyricsContent.textContent = `${track} - ${artistName}`;
+  }
+}
+
+function parseSyncedLyrics(lrcText) {
+  const lines = lrcText.split('\n');
+  currentLyricsLines = [];
+  lines.forEach(line => {
+    const match = line.match(/\[(\d+):(\d+\.\d+)\](.*)/);
+    if (match) {
+      const min = parseInt(match[1]);
+      const sec = parseFloat(match[2]);
+      const text = match[3].trim();
+      const timeMs = (min * 60 + sec) * 1000;
+      if (text) currentLyricsLines.push({ timeMs, text });
+    }
+  });
+}
+
+function updatePlaybackLoop() {
+  if (isPlayingState) {
+    const now = Date.now();
+    const elapsed = now - lastSyncTimestamp;
+    const currentMs = Math.min(localProgressMs + elapsed, totalDurationMs);
+
+    const pct = (currentMs / totalDurationMs) * 100;
+    fill.style.width = `${pct}%`;
+
+    current.textContent = formatTime(currentMs);
+    duration.textContent = formatTime(totalDurationMs);
+
+    if (currentLyricsLines.length > 0) {
+      let activeText = currentLyricsLines[0].text;
+      for (let i = 0; i < currentLyricsLines.length; i++) {
+        if (currentMs >= currentLyricsLines[i].timeMs) {
+          activeText = currentLyricsLines[i].text;
+        } else {
+          break;
+        }
+      }
+      lyricsContent.textContent = activeText;
+    }
+  }
+  requestAnimationFrame(updatePlaybackLoop);
+}
+
+function formatTime(ms) {
+  const totalSec = Math.floor(ms / 1000);
+  const min = Math.floor(totalSec / 60);
+  const sec = totalSec % 60;
+  return `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+}
+
 window.onload = async () => {
   await handleOAuthCallback();
   updateAuthUI();
+  requestAnimationFrame(updatePlaybackLoop);
   if (accessToken) {
     fetchCurrentlyPlaying();
-    setInterval(fetchCurrentlyPlaying, 4000);
+    setInterval(fetchCurrentlyPlaying, 3000);
   }
 };
 </script>

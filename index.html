@@ -28,6 +28,7 @@ pointer-events:none;
 
 /* Topo (Cabeçalho) */
 .top{position:relative;z-index:3;display:flex;justify-content:space-between;align-items:center;width:100%}
+.top-actions{display:flex;gap:8px;align-items:center;}
 .icon-btn{
 width:38px;height:38px;border-radius:50%;background:#ffffff;border:none;
 display:flex;align-items:center;justify-content:center;cursor:pointer;
@@ -50,10 +51,9 @@ box-shadow: 10px 10px 24px rgba(163,177,198,0.7), -10px -10px 24px rgba(255,255,
 display:flex;align-items:center;justify-content:center;
 will-change: transform;
 animation: spin 20s linear infinite;
-animation-play-state: paused; /* Pausado por padrão */
+animation-play-state: paused;
 }
 
-/* Animação de rotação do disco */
 @keyframes spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
@@ -97,7 +97,7 @@ box-shadow: inset 2px 2px 6px rgba(163,177,198,0.3), 4px 4px 12px rgba(163,177,1
 .fill{width:0%;height:100%;background:linear-gradient(90deg, #ff2d88, #7c4dff);border-radius:20px;transition:width 0.1s linear}
 .times{display:flex;justify-content:space-between;margin-top:4px;color:#64748b;font-size:9.5px;font-weight:700}
 
-/* Controles Inferiores (Botões Play/Pause Rosa Neumorphism) */
+/* Controles Inferiores */
 .bottom{position:relative;z-index:3;width:100%;display:flex;align-items:center;justify-content:space-around;padding-top:4px}
 .control-btn{
 background:none;border:none;cursor:pointer;color:#64748b;font-size:15px;font-weight:700;
@@ -129,6 +129,25 @@ transform:scale(0.96);
 .cancel{background:#e2e8f0;border:none;color:#475569}
 .save{background:#ff007f;border:none;color:#fff}
 
+/* Painel da Fila Lateral (Queue) */
+.queue-panel{
+position:absolute;top:0;right:-100%;width:100%;height:100%;background:linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 50%, #94a3b8 100%);
+z-index:15;transition:right 0.3s ease-in-out;padding:20px;display:flex;flex-direction:column;border-radius:40px;box-shadow:-10px 0 30px rgba(0,0,0,0.3);
+}
+.queue-panel.open{right:0}
+.queue-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.queue-heading-title{font-size:14px;font-weight:900;color:#0f172a}
+.queue-list{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding-right:4px}
+.queue-item{
+background:rgba(255,255,255,0.7);backdrop-filter:blur(8px);padding:10px 12px;border-radius:12px;
+box-shadow: 3px 3px 8px rgba(163,177,198,0.5), -3px -3px 8px rgba(255,255,255,0.8);
+display:flex;align-items:center;gap:10px;
+}
+.queue-item-img{width:36px;height:36px;border-radius:8px;background-size:cover;background-position:center;flex-shrink:0}
+.queue-item-info{display:flex;flex-direction:column;overflow:hidden}
+.queue-item-name{font-size:11.5px;font-weight:800;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.queue-item-artist{font-size:9.5px;color:#64748b;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
 /* Painel Spotify / Extra de Conexão no Topo */
 .spotify-top-bar {
 display:flex; justify-content:space-between; width:100%; margin-bottom: 6px;
@@ -149,7 +168,10 @@ font-size: 9.5px; color: #334155; font-weight: 800; cursor: pointer; transition:
 <div class="top">
   <button class="icon-btn" onclick="history.back()">❮</button>
   <div class="playlist-title">Your Playlist</div>
-  <button class="icon-btn" id="openConfigBtn">⚙</button>
+  <div class="top-actions">
+    <button class="icon-btn" id="openQueueBtn" title="Ver Fila">📜</button>
+    <button class="icon-btn" id="openConfigBtn">⚙</button>
+  </div>
 </div>
 
 <div class="spotify-top-bar">
@@ -188,6 +210,18 @@ font-size: 9.5px; color: #334155; font-weight: 800; cursor: pointer; transition:
   <button class="control-btn" title="Next" onclick="nextTrack()">⏭</button>
   <button class="control-btn" title="Repeat">🔁</button>
 </div>
+
+<!-- Painel Lateral da Fila -->
+<div class="queue-panel" id="queuePanel">
+  <div class="queue-header">
+    <div class="queue-heading-title">📜 Próximas na Fila</div>
+    <button class="icon-btn" id="closeQueueBtn">✕</button>
+  </div>
+  <div class="queue-list" id="queueList">
+    <div class="queue-item" style="justify-content:center; color:#64748b; font-size:11px;">Conecte o Spotify para ver a fila.</div>
+  </div>
+</div>
+
 </div>
 
 <!-- Modal Config Client ID -->
@@ -205,8 +239,7 @@ font-size: 9.5px; color: #334155; font-weight: 800; cursor: pointer; transition:
 </div>
 
 <script>
-// Adicionado escopo user-modify-playback-state para permitir controle remoto de Play/Pause/Next/Prev
-const SCOPES = 'user-read-currently-playing user-read-playback-state user-modify-playback-state';
+const SCOPES = 'user-read-currently-playing user-read-playback-state user-modify-playback-state user-read-queue';
 let clientId = localStorage.getItem('spotify_client_id') || '';
 let accessToken = localStorage.getItem('spotify_access_token') || '';
 
@@ -218,6 +251,11 @@ const saveClientIdBtn = document.getElementById('saveClientIdBtn');
 
 const connectNavBtn = document.getElementById('connectNavBtn');
 const disconnectNavBtn = document.getElementById('disconnectNavBtn');
+
+const openQueueBtn = document.getElementById('openQueueBtn');
+const closeQueueBtn = document.getElementById('closeQueueBtn');
+const queuePanel = document.getElementById('queuePanel');
+const queueList = document.getElementById('queueList');
 
 const bgAmbientCover = document.getElementById('bgAmbientCover');
 const trackName = document.getElementById('trackName');
@@ -249,7 +287,12 @@ saveClientIdBtn.onclick = () => {
   alert('Client ID salvo com sucesso!');
 };
 
-// Funções de Controle Ativo via API do Spotify
+openQueueBtn.onclick = () => {
+  queuePanel.classList.add('open');
+  fetchPlayerQueue();
+};
+closeQueueBtn.onclick = () => queuePanel.classList.remove('open');
+
 async function togglePlayState() {
   if (!accessToken) {
     alert('Conecte sua conta do Spotify primeiro.');
@@ -278,7 +321,10 @@ async function nextTrack() {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${accessToken}` }
     });
-    setTimeout(fetchCurrentlyPlaying, 500); // Atualiza após breve delay
+    setTimeout(() => {
+      fetchCurrentlyPlaying();
+      fetchPlayerQueue();
+    }, 500);
   } catch (e) {
     console.error('Erro ao pular faixa', e);
   }
@@ -291,7 +337,10 @@ async function previousTrack() {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${accessToken}` }
     });
-    setTimeout(fetchCurrentlyPlaying, 500);
+    setTimeout(() => {
+      fetchCurrentlyPlaying();
+      fetchPlayerQueue();
+    }, 500);
   } catch (e) {
     console.error('Erro ao voltar faixa', e);
   }
@@ -427,10 +476,46 @@ async function fetchCurrentlyPlaying() {
     if (currentTrackId !== item.id) {
       currentTrackId = item.id;
       fetchLyricsLRCLIB(item.name, item.artists[0].name, item.duration_ms / 1000);
+      fetchPlayerQueue(); // Atualiza a fila sempre que a música mudar
     }
   } catch (err) {
     console.error(err);
   }
+}
+
+async function fetchPlayerQueue() {
+  if (!accessToken) return;
+  try {
+    const res = await fetch('https://api.spotify.com/v1/me/player/queue', {
+      headers: { 'Authorization': `Bearer ${accessToken}` }
+    });
+    if (!res.ok) return;
+    const data = await res.json();
+    
+    if (data.queue && data.queue.length > 0) {
+      renderQueueUI(data.queue);
+    } else {
+      queueList.innerHTML = '<div class="queue-item" style="justify-content:center; color:#64748b; font-size:11px;">Nenhuma música na fila.</div>';
+    }
+  } catch (err) {
+    console.error('Erro ao buscar a fila', err);
+  }
+}
+
+function renderQueueUI(queueArray) {
+  queueList.innerHTML = queueArray.map(track => {
+    const img = (track.album && track.album.images && track.album.images.length > 0) ? track.album.images[0].url : '';
+    const artists = track.artists ? track.artists.map(a => a.name).join(', ') : '';
+    return `
+      <div class="queue-item">
+        <div class="queue-item-img" style="background-image: url('${img}')"></div>
+        <div class="queue-item-info">
+          <div class="queue-item-name">${track.name}</div>
+          <div class="queue-item-artist">${artists}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
 }
 
 async function fetchLyricsLRCLIB(track, artistName, durationSec) {
@@ -512,6 +597,7 @@ window.onload = async () => {
   requestAnimationFrame(updatePlaybackLoop);
   if (accessToken) {
     fetchCurrentlyPlaying();
+    fetchPlayerQueue();
     setInterval(fetchCurrentlyPlaying, 3000);
   }
 };

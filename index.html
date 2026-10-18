@@ -49,7 +49,7 @@ font-size: 9px; color: #334155; font-weight: 800; cursor: pointer; transition: a
 .badge-btn.connect-btn { color: #10b981; }
 .badge-btn.disconnect-btn { color: #ef4444; display: none; }
 
-/* Layout Central em Grid Paisagem (Esquerda: Player, Direita: Fila + Meta) */
+/* Layout Central em Grid Paisagem (Esquerda: Player, Direita: Fila) */
 .landscape-content{
 position:relative;z-index:2;display:grid;grid-template-columns: 1fr 320px;gap:20px;align-items:center;margin:auto 0;width:100%;height:100%;
 }
@@ -125,20 +125,10 @@ box-shadow: inset 2px 2px 4px rgba(150,0,70,0.4), inset -2px -2px 4px rgba(255,1
 transform:scale(0.96);
 }
 
-/* Lado Direito: Painel Fila + Meta de Likes */
+/* Lado Direito: Fila de Reprodução */
 .right-sidebar{
 display:flex;flex-direction:column;gap:10px;height:100%;max-height:460px;
 }
-
-/* Bloco de Meta de Likes para Pular */
-.live-goal-box{
-width:100%;background:rgba(255, 255, 255, 0.5);backdrop-filter:blur(10px);
-border:1px solid rgba(255, 255, 255, 0.8);border-radius:14px;padding:10px 12px;
-box-shadow: inset 2px 2px 5px rgba(163,177,198,0.3);
-}
-.goal-info{display:flex;justify-content:space-between;font-size:9px;font-weight:800;color:#334155;margin-bottom:5px}
-.goal-progress-bar{height:5px;border-radius:20px;background:#cbd5e1;box-shadow: inset 1px 1px 3px rgba(163,177,198,0.8);overflow:hidden}
-.goal-fill{width:0%;height:100%;background:linear-gradient(90deg, #ff007f, #ffaa00);border-radius:20px;transition:width 0.3s ease}
 
 /* Fila de Reprodução */
 .queue-sidebar{
@@ -186,7 +176,7 @@ display:flex;align-items:center;gap:8px;
 
 <div class="top">
   <button class="icon-btn" onclick="history.back()">❮</button>
-  <div class="playlist-title">Music Live Player - Gamified</div>
+  <div class="playlist-title">Music Live Player</div>
   <div class="top-actions">
     <button class="icon-btn" id="openConfigBtn" title="Configurar Client ID">⚙</button>
   </div>
@@ -228,20 +218,8 @@ display:flex;align-items:center;gap:8px;
     </div>
   </div>
 
-  <!-- Lado Direito: Meta de Likes + Fila de Reprodução -->
+  <!-- Lado Direito: Fila de Reprodução -->
   <div class="right-sidebar">
-    <!-- Caixa de Gamificação (Meta de Likes) -->
-    <div class="live-goal-box">
-      <div class="goal-info">
-        <span>🎯 Meta p/ Pular Música</span>
-        <span id="goalText">0 / 100 Likes</span>
-      </div>
-      <div class="goal-progress-bar">
-        <div class="goal-fill" id="goalFill"></div>
-      </div>
-    </div>
-
-    <!-- Fila de Reprodução -->
     <div class="queue-sidebar">
       <div class="queue-header-side">
         <div class="queue-heading-title">📜 Próximas na Fila</div>
@@ -315,12 +293,6 @@ const current = document.getElementById('current');
 const duration = document.getElementById('duration');
 const playPauseBtn = document.getElementById('playPauseBtn');
 const lyricsContent = document.getElementById('lyricsContent');
-
-// Variáveis da Gamificação (Meta de Likes)
-let currentLikes = 0;
-let targetLikes = 100;
-const goalText = document.getElementById('goalText');
-const goalFill = document.getElementById('goalFill');
 
 let currentTrackId = null;
 let currentLyricsLines = [];
@@ -400,28 +372,6 @@ async function previousTrack() {
 
 function updateDiscRotationState() {
   elemDisc.style.animationPlayState = isPlayingState ? 'running' : 'paused';
-}
-
-// Funções de Gamificação (Likes para Pular)
-function addLiveEngagement(amount) {
-  currentLikes += amount;
-  if (currentLikes >= targetLikes) {
-    currentLikes = 0;
-    targetLikes += 50; // Aumenta a dificuldade da próxima meta
-    triggerSkipByGoal();
-  }
-  updateGoalUI();
-}
-
-function updateGoalUI() {
-  const percentage = Math.min((currentLikes / targetLikes) * 100, 100);
-  goalFill.style.width = `${percentage}%`;
-  goalText.textContent = `${currentLikes} / ${targetLikes} Likes`;
-}
-
-async function triggerSkipByGoal() {
-  lyricsContent.textContent = '🔥 Meta batida! Pulando música...';
-  await nextTrack();
 }
 
 // Autenticação Spotify PKCE
@@ -629,20 +579,12 @@ function formatTime(ms) {
 window.onload = async () => {
   await handleOAuthCallback();
   updateAuthUI();
-  updateGoalUI();
   requestAnimationFrame(updatePlaybackLoop);
   if (accessToken) {
     fetchCurrentlyPlaying();
     fetchPlayerQueue();
     setInterval(fetchCurrentlyPlaying, 3000);
   }
-
-  // Atalho de teste rápido: Pressione a tecla 'L' no teclado para simular 10 likes ganhos na live
-  window.addEventListener('keydown', (e) => {
-    if (e.key.toLowerCase() === 'l') {
-      addLiveEngagement(10);
-    }
-  });
 };
 </script>
 </body>

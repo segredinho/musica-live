@@ -206,14 +206,15 @@ display:flex;align-items:center;gap:8px;
     </div>
   </div>
 
-  <!-- Lado Direito: Informações / Controles -->
+  <!-- Lado Direito: Fila de Próximas Músicas -->
   <div class="right-sidebar">
     <div class="queue-sidebar">
       <div class="queue-header-side">
-        <div class="queue-heading-title">📜 Status da Sessão</div>
+        <div class="queue-heading-title">📜 Próximas Músicas</div>
+        <button class="add-queue-btn" id="openAddQueueBtn">+ Adicionar</button>
       </div>
       <div class="queue-list" id="queueList">
-        <div class="queue-item" style="justify-content:center; color:#64748b; font-size:10.5px;">Conecte sua conta para ativar a sincronização em tempo real.</div>
+        <div class="queue-item" style="justify-content:center; color:#64748b; font-size:10.5px;">Conecte o Spotify para ver a fila.</div>
       </div>
     </div>
   </div>
@@ -235,8 +236,22 @@ display:flex;align-items:center;gap:8px;
   </div>
 </div>
 
+<!-- Modal Adicionar Música à Fila -->
+<div class="modal-overlay" id="addQueuePanel">
+  <div class="edit-box">
+    <div class="edit-title">➕ Adicionar Música à Fila</div>
+    <div class="edit-subtitle">Cole o link web ou o <b>Spotify URI</b> da música.</div>
+    <label>Link / Spotify URI</label>
+    <input id="trackUriInput" type="text" placeholder="spotify:track:... ou link do Spotify">
+    <div class="edit-actions">
+      <button id="cancelAddQueue" class="cancel">Cancelar</button>
+      <button id="confirmAddQueueBtn" class="save">Adicionar</button>
+    </div>
+  </div>
+</div>
+
 <script>
-// Escopo limpo e seguro sem dependências restritas
+// Permissões corretas para o Spotify sem gerar erro
 const SCOPES = 'user-read-currently-playing user-read-playback-state user-modify-playback-state';
 let clientId = localStorage.getItem('spotify_client_id') || '';
 let accessToken = localStorage.getItem('spotify_access_token') || '';
@@ -246,6 +261,12 @@ const editPanel = document.getElementById('editPanel');
 const cancelConfig = document.getElementById('cancelConfig');
 const clientIdInput = document.getElementById('clientIdInput');
 const saveClientIdBtn = document.getElementById('saveClientIdBtn');
+
+const openAddQueueBtn = document.getElementById('openAddQueueBtn');
+const addQueuePanel = document.getElementById('addQueuePanel');
+const cancelAddQueue = document.getElementById('cancelAddQueue');
+const trackUriInput = document.getElementById('trackUriInput');
+const confirmAddQueueBtn = document.getElementById('confirmAddQueueBtn');
 
 const connectNavBtn = document.getElementById('connectNavBtn');
 const disconnectNavBtn = document.getElementById('disconnectNavBtn');
@@ -279,6 +300,35 @@ saveClientIdBtn.onclick = () => {
   alert('Client ID salvo com sucesso!');
 };
 
+openAddQueueBtn.onclick = () => {
+  if (!accessToken) { alert('Conecte sua conta do Spotify primeiro.'); return; }
+  trackUriInput.value = '';
+  addQueuePanel.classList.add('show');
+};
+cancelAddQueue.onclick = () => addQueuePanel.classList.remove('show');
+
+confirmAddQueueBtn.onclick = async () => {
+  let uri = trackUriInput.value.trim();
+  if (!uri) return;
+  if (uri.includes('open.spotify.com/track/')) {
+    const parts = uri.split('track/')[1].split('?')[0];
+    uri = `spotify:track:${parts}`;
+  }
+  try {
+    const res = await fetch(`https://api.spotify.com/v1/me/player/queue?uri=${encodeURIComponent(uri)}`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${accessToken}` }
+    });
+    if (res.ok || res.status === 204) {
+      alert('Música adicionada à fila com sucesso!');
+      addQueuePanel.classList.remove('show');
+      fetchPlayerQueue();
+    } else {
+      alert('Erro ao adicionar à fila. Verifique se o Spotify está aberto.');
+    }
+  } catch (e) { console.error(e); }
+};
+
 // Controles Ativos do Spotify
 async function togglePlayState() {
   if (!accessToken) return;
@@ -297,7 +347,7 @@ async function nextTrack() {
   if (!accessToken) return;
   try {
     await fetch('https://api.spotify.com/v1/me/player/next', { method: 'POST', headers: { 'Authorization': `Bearer ${accessToken}` } });
-    setTimeout(() => { fetchCurrentlyPlaying(); }, 500);
+    setTimeout(() => { fetchCurrentlyPlaying(); fetchPlayerQueue(); }, 500);
   } catch (e) { console.error(e); }
 }
 
@@ -305,7 +355,7 @@ async function previousTrack() {
   if (!accessToken) return;
   try {
     await fetch('https://api.spotify.com/v1/me/player/previous', { method: 'POST', headers: { 'Authorization': `Bearer ${accessToken}` } });
-    setTimeout(() => { fetchCurrentlyPlaying(); }, 500);
+    setTimeout(() => { fetchCurrentlyPlaying(); fetchPlayerQueue(); }, 500);
   } catch (e) { console.error(e); }
 }
 
@@ -466,8 +516,42 @@ async function fetchCurrentlyPlaying() {
     if (currentTrackId !== item.id) {
       currentTrackId = item.id;
       fetchLyricsLRCLIB(item.name, item.artists[0].name, item.duration_ms / 1000);
+      fetchPlayerQueue();
     }
   } catch (err) { console.error(err); }
+}
+
+// Busca e exibe as próximas músicas na fila
+async function fetchPlayerQueue() {
+  if (!accessToken) return;
+  try {
+    const res = await fetch('https://api.spotify.com/v1/me/player/queue', {
+      headers: { 'Authorization': `Bearer ${accessToken}` }
+    });
+    if (!res.ok) return;
+    const data = await res.json();
+    if (data.queue && data.queue.length > 0) {
+      renderQueueUI(data.queue);
+    } else {
+      queueList.innerHTML = '<div class="queue-item" style="justify-content:center; color:#64748b; font-size:10.5px;">Nenhuma música na fila.</div>';
+    }
+  } catch (err) { console.error(err); }
+}
+
+function renderQueueUI(queueArray) {
+  queueList.innerHTML = queueArray.slice(0, 10).map(track => {
+    const img = (track.album && track.album.images && track.album.images.length > 0) ? track.album.images[0].url : '';
+    const artists = track.artists ? track.artists.map(a => a.name).join(', ') : '';
+    return `
+      <div class="queue-item">
+        <div class="queue-item-img" style="background-image: url('${img}')"></div>
+        <div class="queue-item-info">
+          <div class="queue-item-name">${track.name}</div>
+          <div class="queue-item-artist">${artists}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
 }
 
 async function fetchLyricsLRCLIB(track, artistName, durationSec) {
@@ -537,6 +621,7 @@ window.onload = async () => {
   requestAnimationFrame(updatePlaybackLoop);
   if (accessToken) {
     fetchCurrentlyPlaying();
+    fetchPlayerQueue();
     setInterval(fetchCurrentlyPlaying, 3000);
   }
 };

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Music Live Player - Gamified Landscape Edition</title>
+<title>Music Live Player - Landscape Edition</title>
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;font-family:'Inter',Segoe UI,Arial,sans-serif;background:#0d111a;color:#1e293b}
@@ -125,12 +125,11 @@ box-shadow: inset 2px 2px 4px rgba(150,0,70,0.4), inset -2px -2px 4px rgba(255,1
 transform:scale(0.96);
 }
 
-/* Lado Direito: Fila de Reprodução */
+/* Lado Direito: Fila de Reprodução ampliada */
 .right-sidebar{
 display:flex;flex-direction:column;gap:10px;height:100%;max-height:460px;
 }
 
-/* Fila de Reprodução */
 .queue-sidebar{
 background:rgba(255, 255, 255, 0.45);backdrop-filter:blur(12px);
 border:1px solid rgba(255, 255, 255, 0.7);
@@ -195,13 +194,13 @@ display:flex;align-items:center;gap:8px;
     </div>
 
     <div class="track">
-      <div class="trackname" id="trackName">Lovestruck</div>
-      <div class="artist" id="artist">Jane Doe feat Dolor</div>
+      <div class="trackname" id="trackName">Nenhuma música tocando</div>
+      <div class="artist" id="artist">Conecte sua conta do Spotify</div>
     </div>
 
     <div class="lyrics-box" id="lyricsBox">
       <div class="lyrics-title-tag">✨ Legenda ao Vivo</div>
-      <div class="lyrics-content" id="lyricsContent">Conecte sua conta do Spotify para sincronizar.</div>
+      <div class="lyrics-content" id="lyricsContent">Aguardando reprodução...</div>
     </div>
 
     <div class="progress-container">

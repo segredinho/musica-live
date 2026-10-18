@@ -49,6 +49,14 @@ background: linear-gradient(135deg, #f1f5f9, #cbd5e1);
 box-shadow: 10px 10px 24px rgba(163,177,198,0.7), -10px -10px 24px rgba(255,255,255,0.9);
 display:flex;align-items:center;justify-content:center;
 will-change: transform;
+animation: spin 20s linear infinite;
+animation-play-state: paused; /* Pausado por padrão */
+}
+
+/* Animação de rotação do disco */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .album-art{
@@ -150,7 +158,7 @@ font-size: 9.5px; color: #334155; font-weight: 800; cursor: pointer; transition:
 </div>
 
 <div class="center">
-  <div class="disc-compact-wrap" id="elem-disc">
+  <div class="disc-compact-wrap" id="elemDisc">
     <div class="album-art" id="albumArt" style="background-image: url('https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=500&auto=format&fit=crop&q=60');"></div>
   </div>
 
@@ -175,9 +183,9 @@ font-size: 9.5px; color: #334155; font-weight: 800; cursor: pointer; transition:
 
 <div class="bottom">
   <button class="control-btn" title="Shuffle">🔀</button>
-  <button class="control-btn" title="Previous">⏮</button>
+  <button class="control-btn" title="Previous" onclick="previousTrack()">⏮</button>
   <button class="play-pause-btn" id="playPauseBtn" onclick="togglePlayState()">⏸</button>
-  <button class="control-btn" title="Next">⏭</button>
+  <button class="control-btn" title="Next" onclick="nextTrack()">⏭</button>
   <button class="control-btn" title="Repeat">🔁</button>
 </div>
 </div>
@@ -197,7 +205,8 @@ font-size: 9.5px; color: #334155; font-weight: 800; cursor: pointer; transition:
 </div>
 
 <script>
-const SCOPES = 'user-read-currently-playing user-read-playback-state';
+// Adicionado escopo user-modify-playback-state para permitir controle remoto de Play/Pause/Next/Prev
+const SCOPES = 'user-read-currently-playing user-read-playback-state user-modify-playback-state';
 let clientId = localStorage.getItem('spotify_client_id') || '';
 let accessToken = localStorage.getItem('spotify_access_token') || '';
 
@@ -214,6 +223,7 @@ const bgAmbientCover = document.getElementById('bgAmbientCover');
 const trackName = document.getElementById('trackName');
 const artist = document.getElementById('artist');
 const albumArt = document.getElementById('albumArt');
+const elemDisc = document.getElementById('elemDisc');
 const fill = document.getElementById('fill');
 const current = document.getElementById('current');
 const duration = document.getElementById('duration');
@@ -239,9 +249,60 @@ saveClientIdBtn.onclick = () => {
   alert('Client ID salvo com sucesso!');
 };
 
-function togglePlayState() {
-  isPlayingState = !isPlayingState;
-  playPauseBtn.textContent = isPlayingState ? '▶' : '⏸';
+// Funções de Controle Ativo via API do Spotify
+async function togglePlayState() {
+  if (!accessToken) {
+    alert('Conecte sua conta do Spotify primeiro.');
+    return;
+  }
+  const endpoint = isPlayingState ? 'https://api.spotify.com/v1/me/player/pause' : 'https://api.spotify.com/v1/me/player/play';
+  try {
+    const res = await fetch(endpoint, {
+      method: 'PUT',
+      headers: { 'Authorization': `Bearer ${accessToken}` }
+    });
+    if (res.ok || res.status === 204) {
+      isPlayingState = !isPlayingState;
+      updateDiscRotationState();
+      playPauseBtn.textContent = isPlayingState ? '⏸' : '▶';
+    }
+  } catch (e) {
+    console.error('Erro ao alterar estado de reprodução', e);
+  }
+}
+
+async function nextTrack() {
+  if (!accessToken) return;
+  try {
+    await fetch('https://api.spotify.com/v1/me/player/next', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${accessToken}` }
+    });
+    setTimeout(fetchCurrentlyPlaying, 500); // Atualiza após breve delay
+  } catch (e) {
+    console.error('Erro ao pular faixa', e);
+  }
+}
+
+async function previousTrack() {
+  if (!accessToken) return;
+  try {
+    await fetch('https://api.spotify.com/v1/me/player/previous', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${accessToken}` }
+    });
+    setTimeout(fetchCurrentlyPlaying, 500);
+  } catch (e) {
+    console.error('Erro ao voltar faixa', e);
+  }
+}
+
+function updateDiscRotationState() {
+  if (isPlayingState) {
+    elemDisc.style.animationPlayState = 'running';
+  } else {
+    elemDisc.style.animationPlayState = 'paused';
+  }
 }
 
 connectNavBtn.onclick = async () => {
@@ -352,6 +413,8 @@ async function fetchCurrentlyPlaying() {
     lastSyncTimestamp = Date.now();
 
     playPauseBtn.textContent = isPlayingState ? '⏸' : '▶';
+    updateDiscRotationState();
+
     trackName.textContent = item.name;
     artist.textContent = item.artists.map(a => a.name).join(', ');
 
